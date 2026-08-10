@@ -1,5 +1,5 @@
-import { ThemeMode } from "../../utils/enums";
-import { useTheme } from "../../store/global";
+import { ThemeMode } from '../../utils/enums';
+import { useTheme } from '../../store/global';
 
 const ThemeTest = () => {
   const { mode, theme, setMode, toggleTheme } = useTheme();
@@ -9,7 +9,7 @@ const ThemeTest = () => {
   return (
     <main
       style={{
-        minHeight: "100vh",
+        minHeight: '100vh',
         padding: theme.spacing.xxxl,
         backgroundColor: theme.colors.background.page,
         color: theme.colors.text.primary,
@@ -19,8 +19,8 @@ const ThemeTest = () => {
     >
       <section
         style={{
-          maxWidth: "700px",
-          margin: "0 auto",
+          maxWidth: '700px',
+          margin: '0 auto',
           padding: theme.spacing.xxxl,
           backgroundColor: theme.colors.background.elevated,
           border: `${theme.border.width.thin} solid ${theme.colors.border.default}`,
@@ -48,13 +48,13 @@ const ThemeTest = () => {
             lineHeight: theme.font.lineHeight.relaxed,
           }}
         >
-          Current mode: <strong>{isDarkMode ? "Dark" : "Light"}</strong>
+          Current mode: <strong>{isDarkMode ? 'Dark' : 'Light'}</strong>
         </p>
 
         <div
           style={{
-            display: "flex",
-            flexWrap: "wrap",
+            display: 'flex',
+            flexWrap: 'wrap',
             gap: theme.spacing.md,
             marginBottom: theme.spacing.xxxl,
           }}
@@ -67,14 +67,14 @@ const ThemeTest = () => {
               paddingInline: theme.button.size.md.paddingX,
               backgroundColor: theme.colors.button.primaryBackground,
               color: theme.colors.button.primaryText,
-              border: "none",
+              border: 'none',
               borderRadius: theme.button.radius.rounded,
               fontSize: theme.button.size.md.fontSize,
               fontWeight: theme.font.weight.medium,
-              cursor: "pointer",
+              cursor: 'pointer',
             }}
           >
-            Switch to {isDarkMode ? "light" : "dark"} mode
+            Switch to {isDarkMode ? 'light' : 'dark'} mode
           </button>
 
           <button
@@ -92,9 +92,9 @@ const ThemeTest = () => {
                 mode === ThemeMode.Light
                   ? theme.colors.chip.selectedText
                   : theme.colors.chip.text,
-              border: "none",
+              border: 'none',
               borderRadius: theme.button.radius.rounded,
-              cursor: "pointer",
+              cursor: 'pointer',
             }}
           >
             Light
@@ -115,9 +115,9 @@ const ThemeTest = () => {
                 mode === ThemeMode.Dark
                   ? theme.colors.chip.selectedText
                   : theme.colors.chip.text,
-              border: "none",
+              border: 'none',
               borderRadius: theme.button.radius.rounded,
-              cursor: "pointer",
+              cursor: 'pointer',
             }}
           >
             Dark
@@ -126,7 +126,7 @@ const ThemeTest = () => {
 
         <div
           style={{
-            display: "grid",
+            display: 'grid',
             gap: theme.spacing.lg,
           }}
         >
@@ -158,7 +158,7 @@ const ThemeTest = () => {
 
           <div
             style={{
-              display: "flex",
+              display: 'flex',
               gap: theme.spacing.md,
             }}
           >

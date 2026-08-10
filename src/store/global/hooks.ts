@@ -1,20 +1,22 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 
-import type { AppDispatch, RootState } from "../store";
+import { setThemeMode, toggleSidebar, toggleTheme } from './action';
 
-export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
-export const useAppSelector = useSelector.withTypes<RootState>();
-
-import {
-  setThemeMode as setThemeModeAction,
-  toggleTheme as toggleThemeAction,
-} from "./action";
 import {
   selectActiveTheme,
+  selectIsSidebarOpen,
   selectThemeMode,
-} from "./selector";
+} from './selector';
+import type { TypedUseSelectorHook } from 'react-redux';
 
-import type { ThemeMode } from "../../utils/enums";
+import type { AppDispatch, RootState } from '../store';
+
+import type { ThemeMode } from '../../utils/enums';
+
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
 export const useTheme = () => {
   const dispatch = useAppDispatch();
 
@@ -22,17 +24,31 @@ export const useTheme = () => {
   const theme = useAppSelector(selectActiveTheme);
 
   const setMode = (newMode: ThemeMode) => {
-    dispatch(setThemeModeAction(newMode));
+    dispatch(setThemeMode(newMode));
   };
 
-  const toggleTheme = () => {
-    dispatch(toggleThemeAction());
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme());
   };
 
   return {
     mode,
     theme,
     setMode,
-    toggleTheme,
+    toggleTheme: handleToggleTheme,
+  };
+};
+export const useSidebar = () => {
+  const dispatch = useAppDispatch();
+
+  const isSidebarOpen = useAppSelector(selectIsSidebarOpen);
+
+  const handleToggleSidebar = () => {
+    dispatch(toggleSidebar());
+  };
+
+  return {
+    isSidebarOpen,
+    toggleSidebar: handleToggleSidebar,
   };
 };

@@ -1,4 +1,4 @@
-import { blue, common, gray, green, overlay, red, yellow } from "./color";
+import { blue, common, gray, green, overlay, red, yellow } from './color';
 
 export const lightColors = {
   brand: {

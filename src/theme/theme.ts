@@ -1,8 +1,8 @@
-import { darkColors } from "./darkColors";
-import { lightColors } from "./lightColors";
-import { ThemeMode } from "../utils/enums";
+import { darkColors } from './darkColors';
+import { lightColors } from './lightColors';
+import { ThemeMode } from '../utils/enums';
 
-export const THEME_STORAGE_KEY = "youtube-clone-theme";
+export const THEME_STORAGE_KEY = 'youtube-clone-theme';
 
 export const font = {
   family: {
@@ -12,17 +12,17 @@ export const font = {
   },
 
   size: {
-    xxs: "10px",
-    xs: "12px",
-    sm: "14px",
-    md: "16px",
-    lg: "18px",
-    xl: "20px",
-    xxl: "24px",
-    xxxl: "32px",
-    displaySm: "36px",
-    displayMd: "48px",
-    displayLg: "64px",
+    xxs: '10px',
+    xs: '12px',
+    sm: '14px',
+    md: '16px',
+    lg: '18px',
+    xl: '20px',
+    xxl: '24px',
+    xxxl: '32px',
+    displaySm: '36px',
+    displayMd: '48px',
+    displayLg: '64px',
   },
 
   weight: {
@@ -40,55 +40,56 @@ export const font = {
 } as const;
 
 export const spacing = {
-  none: "0px",
-  xxs: "2px",
-  xs: "4px",
-  sm: "8px",
-  md: "12px",
-  lg: "16px",
-  xl: "20px",
-  xxl: "24px",
-  xxxl: "32px",
-  section: "40px",
-  page: "64px",
+  none: '0px',
+  xxs: '2px',
+  xs: '4px',
+  sm: '8px',
+  md: '12px',
+  lg: '16px',
+  xl: '20px',
+  xxl: '24px',
+  28: '28px',
+  xxxl: '32px',
+  section: '40px',
+  page: '64px',
 } as const;
 
 export const radius = {
-  none: "0px",
-  xs: "2px",
-  sm: "4px",
-  md: "8px",
-  lg: "12px",
-  xl: "16px",
-  xxl: "24px",
-  round: "9999px",
-  circle: "50%",
+  none: '0px',
+  xs: '2px',
+  sm: '4px',
+  md: '8px',
+  lg: '12px',
+  xl: '16px',
+  xxl: '24px',
+  round: '9999px',
+  circle: '50%',
 } as const;
 
 export const border = {
   width: {
-    none: "0px",
-    thin: "1px",
-    medium: "2px",
-    thick: "3px",
+    none: '0px',
+    thin: '1px',
+    medium: '2px',
+    thick: '3px',
   },
 } as const;
 
 export const icon = {
   size: {
-    xs: "14px",
-    sm: "18px",
-    md: "24px",
-    lg: "28px",
-    xl: "32px",
-    xxl: "40px",
+    xs: '14px',
+    sm: '18px',
+    md: '24px',
+    lg: '28px',
+    xl: '32px',
+    xxl: '40px',
   },
 } as const;
 
 export const button = {
   size: {
     xs: {
-      height: "28px",
+      height: '28px',
       paddingX: spacing.sm,
       fontSize: font.size.xs,
       iconSize: icon.size.xs,
@@ -96,7 +97,7 @@ export const button = {
     },
 
     sm: {
-      height: "32px",
+      height: '32px',
       paddingX: spacing.md,
       fontSize: font.size.sm,
       iconSize: icon.size.sm,
@@ -104,7 +105,7 @@ export const button = {
     },
 
     md: {
-      height: "40px",
+      height: '40px',
       paddingX: spacing.lg,
       fontSize: font.size.sm,
       iconSize: icon.size.md,
@@ -112,7 +113,7 @@ export const button = {
     },
 
     lg: {
-      height: "48px",
+      height: '48px',
       paddingX: spacing.xl,
       fontSize: font.size.md,
       iconSize: icon.size.lg,
@@ -120,7 +121,7 @@ export const button = {
     },
 
     xl: {
-      height: "56px",
+      height: '56px',
       paddingX: spacing.xxl,
       fontSize: font.size.lg,
       iconSize: icon.size.xl,
@@ -138,19 +139,19 @@ export const button = {
 export const input = {
   size: {
     sm: {
-      height: "32px",
+      height: '32px',
       paddingX: spacing.md,
       fontSize: font.size.sm,
     },
 
     md: {
-      height: "40px",
+      height: '40px',
       paddingX: spacing.lg,
       fontSize: font.size.md,
     },
 
     lg: {
-      height: "48px",
+      height: '48px',
       paddingX: spacing.xl,
       fontSize: font.size.md,
     },
@@ -161,72 +162,72 @@ export const input = {
 
 export const avatar = {
   size: {
-    xs: "24px",
-    sm: "32px",
-    md: "40px",
-    lg: "48px",
-    xl: "64px",
-    xxl: "96px",
+    xs: '24px',
+    sm: '32px',
+    md: '40px',
+    lg: '48px',
+    xl: '64px',
+    xxl: '96px',
   },
 } as const;
 
 export const header = {
   height: {
-    mobile: "56px",
-    desktop: "56px",
+    mobile: '56px',
+    desktop: '56px',
   },
 
   logoWidth: {
-    mobile: "90px",
-    desktop: "120px",
+    mobile: '90px',
+    desktop: '120px',
   },
-
+  searchButtonWidth: '64px',
   searchWidth: {
-    min: "240px",
-    max: "640px",
+    min: '240px',
+    max: '640px',
   },
 } as const;
 
 export const sidebar = {
   width: {
-    collapsed: "72px",
-    expanded: "240px",
-    mobile: "280px",
+    collapsed: '72px',
+    expanded: '240px',
+    mobile: '280px',
   },
 
   itemHeight: {
-    compact: "40px",
-    regular: "48px",
+    compact: '40px',
+    regular: '48px',
   },
 } as const;
 
 export const video = {
   thumbnail: {
-    aspectRatio: "16 / 9",
-    minWidth: "240px",
+    aspectRatio: '16 / 9',
+    minWidth: '240px',
     radius: radius.lg,
   },
 
   card: {
-    minWidth: "240px",
-    maxWidth: "420px",
+    minWidth: '240px',
+    maxWidth: '420px',
     gap: spacing.md,
   },
 
   player: {
-    aspectRatio: "16 / 9",
-    minHeight: "240px",
-    maxHeight: "720px",
+    aspectRatio: '16 / 9',
+    minHeight: '240px',
+    maxHeight: '720px',
   },
 
   progressBar: {
-    height: "3px",
-    hoverHeight: "5px",
+    height: '3px',
+    hoverHeight: '5px',
   },
 } as const;
 
 export const layout = {
-  contentMaxWidth: "1800px",
+  contentMaxWidth: '1800px',
 
   pagePadding: {
     mobile: spacing.md,
@@ -251,18 +252,18 @@ export const breakpoint = {
 
 export const transition = {
   duration: {
-    instant: "100ms",
-    fast: "150ms",
-    normal: "250ms",
-    slow: "350ms",
-    slower: "500ms",
+    instant: '100ms',
+    fast: '150ms',
+    normal: '250ms',
+    slow: '350ms',
+    slower: '500ms',
   },
 
   timing: {
-    ease: "ease",
-    easeIn: "ease-in",
-    easeOut: "ease-out",
-    easeInOut: "ease-in-out",
+    ease: 'ease',
+    easeIn: 'ease-in',
+    easeOut: 'ease-out',
+    easeInOut: 'ease-in-out',
   },
 } as const;
 
@@ -324,7 +325,4 @@ export const themes = {
   [ThemeMode.Dark]: darkTheme,
 } as const;
 
-export type AppTheme =
-  (typeof themes)[keyof typeof themes];
-
-
+export type AppTheme = (typeof themes)[keyof typeof themes];

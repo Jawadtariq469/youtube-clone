@@ -12,10 +12,10 @@ export {
   overlay,
   red,
   yellow,
-} from "./color";
+} from './color';
 
-export { darkColors } from "./darkColors";
-export { lightColors } from "./lightColors";
+export { darkColors } from './darkColors';
+export { lightColors } from './lightColors';
 
 export {
   avatar,
@@ -36,11 +36,10 @@ export {
   transition,
   video,
   zIndex,
-} from "./theme";
+} from './theme';
 
-export { ThemeProvider, useTheme } from "./ThemeProvider";
+export { ThemeProvider, useTheme } from './ThemeProvider';
 
-export type { AppTheme } from "./theme";
+export type { AppTheme } from './theme';
 
-
-export type { TColor } from "./lightColors";
+export type { TColor } from './lightColors';

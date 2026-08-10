@@ -6,9 +6,9 @@ import {
   darkOverlay,
   darkRed,
   darkYellow,
-} from "./color";
+} from './color';
 
-import type { TColor } from "./lightColors";
+import type { TColor } from './lightColors';
 
 export const darkColors = {
   brand: {
