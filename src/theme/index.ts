@@ -38,8 +38,6 @@ export {
   zIndex,
 } from './theme';
 
-export { ThemeProvider, useTheme } from './ThemeProvider';
-
 export type { AppTheme } from './theme';
 
 export type { TColor } from './lightColors';

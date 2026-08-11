@@ -1,4 +1,4 @@
 export { AppConstants } from './app';
-export { AppRoutes } from './routes';
+export { AppQueryParameters, AppRoutes } from './routes';
 export { AppText } from './text';
 export { GlobalActionType } from './action';

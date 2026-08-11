@@ -2,14 +2,21 @@ import type { AppTheme } from '../../../theme';
 
 export interface HeaderProps {
   userName: string;
+
   userAvatarUrl?: string;
+
+  currentSearchValue?: string;
 
   onSearch: (searchValue: string) => void;
 
   onMenuClick?: () => void;
+
   onVoiceSearchClick?: () => void;
+
   onCreateClick?: () => void;
+
   onNotificationsClick?: () => void;
+
   onProfileClick?: () => void;
 }
 

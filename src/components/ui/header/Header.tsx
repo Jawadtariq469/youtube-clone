@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { useDebouncedValue } from '../../../hooks/useDebouncedValue';
+import { useSearchSuggestions } from '../../../hooks/useSearchSuggestions';
 import { Avatar, Button, IconButton } from '../../elements';
 import {
   CreateIcon,
@@ -34,9 +36,12 @@ import {
 import type { ChangeEvent, FormEvent } from 'react';
 import type { HeaderProps } from './types';
 
+const SEARCH_SUGGESTION_DEBOUNCE_MS = 300;
+
 const Header = ({
   userName,
   userAvatarUrl,
+  currentSearchValue = AppConstants.EmptyString,
   onSearch,
   onMenuClick,
   onVoiceSearchClick,
@@ -44,17 +49,25 @@ const Header = ({
   onNotificationsClick,
   onProfileClick,
 }: HeaderProps) => {
-  const [searchValue, setSearchValue] = useState<string>(
-    AppConstants.EmptyString,
+  const [draftSearchValue, setDraftSearchValue] = useState<string | null>(null);
+
+  const searchValue = draftSearchValue ?? currentSearchValue;
+
+  const debouncedSearchValue = useDebouncedValue(
+    searchValue,
+    SEARCH_SUGGESTION_DEBOUNCE_MS,
   );
+
+  const { data: searchSuggestions = [], isFetching: isSuggestionsLoading } =
+    useSearchSuggestions(debouncedSearchValue);
 
   const { theme } = useTheme();
 
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setDraftSearchValue(event.target.value);
   };
 
-  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
     const normalizedSearchValue = searchValue.trim();
@@ -64,6 +77,12 @@ const Header = ({
     }
 
     onSearch(normalizedSearchValue);
+    setDraftSearchValue(null);
+  };
+
+  const handleSuggestionSelect = (suggestion: string): void => {
+    onSearch(suggestion);
+    setDraftSearchValue(null);
   };
 
   return (
@@ -97,6 +116,9 @@ const Header = ({
           buttonLabel={AppText.Header.SearchButtonLabel}
           onChange={handleSearchChange}
           onSubmit={handleSearchSubmit}
+          suggestions={searchSuggestions}
+          isSuggestionsLoading={isSuggestionsLoading}
+          onSuggestionSelect={handleSuggestionSelect}
         />
 
         <VoiceSearchAction $appTheme={theme}>
