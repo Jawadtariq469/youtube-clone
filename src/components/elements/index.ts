@@ -3,7 +3,9 @@ export { default as IconButton } from './iconButton/IconButton';
 export { default as SearchInput } from './searchInput/SearchInput';
 export { default as Avatar } from './avatar/Avatar';
 export { default as SidebarItem } from './sideBarItem/SideBarItem';
+export { default as Skeleton } from './skeleton/Skeleton';
 
+export type { SkeletonProps } from './skeleton/types';
 export type { AvatarProps } from './avatar/types';
 export type { ButtonProps } from './button/Button';
 export type { IconButtonProps } from './iconButton/types';

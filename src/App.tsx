@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
 
 import { Header, Sidebar } from './components/ui';
@@ -5,14 +6,24 @@ import { AppQueryParameters, AppRoutes } from './constants';
 import { useSidebar, useTheme } from './store/global';
 import HomeView from './views/home/HomeView';
 import SearchResultsView from './views/searchResult/SearchResultsView';
+import WatchView from './views/watch/WatchView';
+
+import { WatchSidebarBackdrop, WatchSidebarDrawer } from './App.styles';
 
 const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const { isSidebarOpen, toggleSidebar } = useSidebar();
-
   const { theme } = useTheme();
+
+  const [openWatchSidebarLocationKey, setOpenWatchSidebarLocationKey] =
+    useState<string | null>(null);
+
+  const isWatchPage = location.pathname === AppRoutes.Watch;
+
+  const isWatchSidebarOpen =
+    isWatchPage && openWatchSidebarLocationKey === location.key;
 
   const currentSearchValue =
     location.pathname === AppRoutes.Results
@@ -36,7 +47,32 @@ const App = () => {
   };
 
   const handleVideoSelect = (videoId: string): void => {
-    console.log('Selected video:', videoId);
+    const searchParameters = new URLSearchParams({
+      [AppQueryParameters.VideoId]: videoId,
+    });
+
+    navigate(`${AppRoutes.Watch}?${searchParameters.toString()}`);
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  const handleMenuClick = (): void => {
+    if (!isWatchPage) {
+      toggleSidebar();
+
+      return;
+    }
+
+    setOpenWatchSidebarLocationKey((currentLocationKey) =>
+      currentLocationKey === location.key ? null : location.key,
+    );
+  };
+
+  const handleWatchSidebarClose = (): void => {
+    setOpenWatchSidebarLocationKey(null);
   };
 
   return (
@@ -45,8 +81,26 @@ const App = () => {
         userName="GU"
         currentSearchValue={currentSearchValue}
         onSearch={handleSearch}
-        onMenuClick={toggleSidebar}
+        onMenuClick={handleMenuClick}
       />
+
+      {isWatchSidebarOpen && (
+        <>
+          <WatchSidebarBackdrop
+            type="button"
+            $appTheme={theme}
+            aria-label="Close navigation menu"
+            onClick={handleWatchSidebarClose}
+          />
+
+          <WatchSidebarDrawer
+            $appTheme={theme}
+            aria-label="Watch page navigation"
+          >
+            <Sidebar isExpanded activePath={location.pathname} />
+          </WatchSidebarDrawer>
+        </>
+      )}
 
       <div
         style={{
@@ -55,16 +109,20 @@ const App = () => {
           width: '100%',
         }}
       >
-        <Sidebar isExpanded={isSidebarOpen} activePath={location.pathname} />
+        {!isWatchPage && (
+          <Sidebar isExpanded={isSidebarOpen} activePath={location.pathname} />
+        )}
 
         <main
           style={{
             flex: 1,
             minWidth: 0,
             minHeight: `calc(
-            100vh - ${theme.header.height.desktop}
-          )`,
-            padding: `12px ${theme.spacing.xxxl} ${theme.spacing.xxxl}`,
+              100vh - ${theme.header.height.desktop}
+            )`,
+            padding: isWatchPage
+              ? '12px 24px 40px'
+              : `12px ${theme.spacing.xxxl} ${theme.spacing.xxxl}`,
             color: theme.colors.text.primary,
             backgroundColor: theme.colors.background.page,
             fontFamily: theme.font.family.primary,
@@ -79,6 +137,11 @@ const App = () => {
             <Route
               path={AppRoutes.Results}
               element={<SearchResultsView onVideoSelect={handleVideoSelect} />}
+            />
+
+            <Route
+              path={AppRoutes.Watch}
+              element={<WatchView onVideoSelect={handleVideoSelect} />}
             />
           </Routes>
         </main>

@@ -1,6 +1,7 @@
 export const AppRoutes = {
   Home: '/',
   Results: '/results',
+  Watch: '/watch',
   Shorts: '/shorts',
   Subscriptions: '/subscriptions',
   History: '/history',
@@ -8,4 +9,5 @@ export const AppRoutes = {
 
 export const AppQueryParameters = {
   SearchQuery: 'search_query',
+  VideoId: 'v',
 } as const;

@@ -1,0 +1,34 @@
+import type { Video } from '../../utils/types';
+
+export interface WatchViewProps {
+  autoPlay?: boolean;
+
+  onVideoSelect: (videoId: string) => void;
+}
+
+export interface ExpandableDescriptionProps {
+  description: string;
+}
+
+export interface WatchInformationProps {
+  video?: Video | null;
+
+  isLoading: boolean;
+  isError: boolean;
+
+  error: unknown;
+}
+
+export interface WatchRecommendationsProps {
+  video?: Video | null;
+
+  currentVideoId: string;
+
+  isVideoLoading: boolean;
+
+  onVideoSelect: (videoId: string) => void;
+}
+export interface RecommendationSelection {
+  videoId: string;
+  filterId: string;
+}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { CategoryBar, VideoGrid } from '../../components/ui';
+import { CategoryBar, VideoGrid, VideoGridShimmer } from '../../components/ui';
 import { usePopularVideos } from '../../hooks/usePopularVideos';
 
 import { StatusMessage } from './homeView.styles';
@@ -60,8 +60,7 @@ const HomeView = ({ onVideoSelect }: HomeViewProps) => {
         onSelect={setSelectedCategory}
       />
 
-      {isPending && <StatusMessage>Loading videos...</StatusMessage>}
-
+      {isPending && <VideoGridShimmer />}
       {isError && (
         <StatusMessage>
           Failed to load videos:{' '}

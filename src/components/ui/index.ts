@@ -5,9 +5,17 @@ export { default as Sidebar } from './sidebar/Sidebar';
 export { default as VideoCard } from './videoCard/VideoCard';
 export { default as VideoGrid } from './videoGrid/VideoGrid';
 export { default as SearchResultCard } from './searchResultCard/SearchResultCard';
-export type { SearchResultCardProps } from './searchResultCard/types';
-
 export { default as SearchResults } from './searchResults/SearchResults';
+export { default as VideoGridShimmer } from './videoGridShimmer/VideoGridShimmer';
+export { default as SearchResultsShimmer } from './searchResultShimmer/SearchResult';
+export { default as VideoPlayer } from './videoPlayer/VideoPlayer';
+export { default as RelatedVideos } from './relatedVideos/RelatedVideos';
+
+export type { RelatedVideosProps } from './relatedVideos/types';
+export type { VideoPlayerProps } from './videoPlayer/types';
+export type { SearchResultCardProps } from './searchResultCard/types';
+export type { SearchResultsShimmerProps } from './searchResultShimmer/types';
+export type { VideoGridShimmerProps } from './videoGridShimmer/types';
 export type { SearchResultsProps } from './searchResults/types';
 export type { CategoryBarProps, CategoryOption } from './categoryBar/types';
 export type { HeaderProps } from './header/types';

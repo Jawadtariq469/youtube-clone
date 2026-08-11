@@ -27,6 +27,9 @@ export const searchVideos = async (query: string): Promise<Video[]> => {
         regionCode: 'PK',
         order: 'relevance',
         safeSearch: 'moderate',
+
+        videoEmbeddable: 'true',
+        videoSyndicated: 'true',
       },
     },
   );

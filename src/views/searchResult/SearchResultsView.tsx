@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router';
 
-import { SearchResults } from '../../components/ui';
+import { SearchResults, SearchResultsShimmer } from '../../components/ui';
 import { AppConstants, AppQueryParameters } from '../../constants';
 import { useSearchVideos } from '../../hooks/useSearchVideos';
 
@@ -27,7 +27,7 @@ const SearchResultsView = ({ onVideoSelect }: SearchResultsViewProps) => {
   }
 
   if (isPending) {
-    return <StatusMessage>Loading search results...</StatusMessage>;
+    return <SearchResultsShimmer />;
   }
 
   if (isError) {
