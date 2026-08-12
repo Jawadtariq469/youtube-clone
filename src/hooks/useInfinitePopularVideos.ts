@@ -10,7 +10,10 @@ const INFINITE_POPULAR_VIDEOS_QUERY_KEY = [
 
 const INITIAL_PAGE_TOKEN = '';
 
-export const useInfinitePopularVideos = (categoryId: string) => {
+export const useInfinitePopularVideos = (
+  categoryId: string,
+  isEnabled = true,
+) => {
   return useInfiniteQuery({
     queryKey: [...INFINITE_POPULAR_VIDEOS_QUERY_KEY, categoryId],
 
@@ -20,6 +23,6 @@ export const useInfinitePopularVideos = (categoryId: string) => {
 
     getNextPageParam: (lastPage) => lastPage.nextPageToken,
 
-    enabled: Boolean(categoryId),
+    enabled: isEnabled && Boolean(categoryId),
   });
 };
