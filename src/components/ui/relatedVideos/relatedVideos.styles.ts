@@ -240,3 +240,42 @@ export const RecommendationFilterButton = styled.button<RecommendationFilterButt
     outline-offset: 2px;
   }
 `;
+export const ThumbnailFallback = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 12px;
+
+  color: #ffffff;
+  background: linear-gradient(135deg, #3a3a3a, #181818);
+
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+`;
+
+export const ShowMoreContainer = styled.div`
+  display: none;
+
+  width: 100%;
+
+  margin-top: 16px;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+export const DesktopInfiniteScrollSentinel = styled.div`
+  display: block;
+
+  width: 100%;
+  height: 1px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;

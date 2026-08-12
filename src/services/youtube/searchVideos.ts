@@ -1,6 +1,8 @@
-import { youtubeApi } from '../../config/youtubeApi';
-import type { Video } from '../../utils/types/video';
+import { youtubeApi } from '../../config';
+
 import { mapYoutubeVideo } from './mapYoutubeVideo';
+
+import type { Video, VideoPage } from '../../utils/types';
 import type {
   YouTubeSearchResponse,
   YouTubeVideoItem,
@@ -9,11 +11,16 @@ import type {
 
 const MAX_RESULTS = 24;
 
-export const searchVideos = async (query: string): Promise<Video[]> => {
+export const searchVideosPage = async (
+  query: string,
+  pageToken = '',
+): Promise<VideoPage> => {
   const normalizedQuery = query.trim();
 
   if (!normalizedQuery) {
-    return [];
+    return {
+      videos: [],
+    };
   }
 
   const searchResponse = await youtubeApi.get<YouTubeSearchResponse>(
@@ -24,22 +31,36 @@ export const searchVideos = async (query: string): Promise<Video[]> => {
         q: normalizedQuery,
         type: 'video',
         maxResults: MAX_RESULTS,
-        regionCode: 'PK',
+
+        regionCode: import.meta.env.VITE_YOUTUBE_REGION_CODE,
+
         order: 'relevance',
         safeSearch: 'moderate',
 
         videoEmbeddable: 'true',
         videoSyndicated: 'true',
+
+        pageToken: pageToken || undefined,
       },
     },
   );
+
+  const nextPageToken = searchResponse.data.nextPageToken;
 
   const videoIds = searchResponse.data.items
     .map((item) => item.id.videoId)
     .filter((videoId): videoId is string => Boolean(videoId));
 
   if (videoIds.length === 0) {
-    return [];
+    return {
+      videos: [],
+
+      ...(nextPageToken
+        ? {
+            nextPageToken,
+          }
+        : {}),
+    };
   }
 
   const videosResponse = await youtubeApi.get<YouTubeVideosResponse>(
@@ -56,8 +77,28 @@ export const searchVideos = async (query: string): Promise<Video[]> => {
     videosResponse.data.items.map((video) => [video.id, video]),
   );
 
-  return videoIds
+  const videos = videoIds
     .map((videoId) => videosById.get(videoId))
     .filter((video): video is YouTubeVideoItem => Boolean(video))
     .map(mapYoutubeVideo);
+
+  return {
+    videos,
+
+    ...(nextPageToken
+      ? {
+          nextPageToken,
+        }
+      : {}),
+  };
+};
+
+/**
+ * Used by features that only require the first page,
+ * such as watch-page recommendations.
+ */
+export const searchVideos = async (query: string): Promise<Video[]> => {
+  const firstPage = await searchVideosPage(query);
+
+  return firstPage.videos;
 };

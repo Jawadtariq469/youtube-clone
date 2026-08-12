@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useDebouncedValue } from '../../../hooks/useDebouncedValue';
 import { useSearchSuggestions } from '../../../hooks/useSearchSuggestions';
-import { Avatar, Button, IconButton } from '../../elements';
+import { Button, IconButton } from '../../elements';
 import {
   CreateIcon,
   MenuIcon,
@@ -13,7 +13,6 @@ import {
 import { AppConstants, AppRoutes, AppText } from '../../../constants';
 import { useTheme } from '../../../store/global';
 import {
-  AvatarSize,
   ButtonSize,
   ButtonVariant,
   IconButtonSize,
@@ -32,22 +31,19 @@ import {
   HeaderRight,
   VoiceSearchAction,
 } from './header.styles';
-
+import ProfileMenu from '../profileMenu/ProfileMenu';
 import type { ChangeEvent, FormEvent } from 'react';
 import type { HeaderProps } from './types';
 
 const SEARCH_SUGGESTION_DEBOUNCE_MS = 300;
 
 const Header = ({
-  userName,
-  userAvatarUrl,
   currentSearchValue = AppConstants.EmptyString,
   onSearch,
   onMenuClick,
   onVoiceSearchClick,
   onCreateClick,
   onNotificationsClick,
-  onProfileClick,
 }: HeaderProps) => {
   const [draftSearchValue, setDraftSearchValue] = useState<string | null>(null);
 
@@ -151,13 +147,7 @@ const Header = ({
           onClick={onNotificationsClick}
         />
 
-        <Avatar
-          name={userName}
-          src={userAvatarUrl}
-          label={AppText.Header.UserProfile}
-          size={AvatarSize.Small}
-          onClick={onProfileClick}
-        />
+        <ProfileMenu />
       </HeaderRight>
     </HeaderContainer>
   );

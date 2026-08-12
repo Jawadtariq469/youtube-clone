@@ -10,6 +10,11 @@ export interface RelatedVideosProps {
   onVideoSelect: (videoId: string) => void;
   onFilterSelect: (filterId: string) => void;
 
+  hasMoreVideos?: boolean;
+  isLoadingMore?: boolean;
+
+  onLoadMore?: () => Promise<void>;
+
   isLoading?: boolean;
   isError?: boolean;
 }
@@ -26,4 +31,8 @@ export interface RecommendationFiltersProps {
   selectedFilterId: string;
 
   onFilterSelect: (filterId: string) => void;
+}
+
+export interface RelatedVideosSkeletonProps {
+  itemCount?: number;
 }

@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { usePopularVideos } from './usePopularVideos';
-import { useSearchVideos } from './useSearchVideos';
+import { useInfinitePopularVideos } from './useInfinitePopularVideos';
+import { useInfiniteSearchVideos } from './useInfiniteSearchVideos';
 
 import {
   createRecommendationFilters,
@@ -40,22 +40,55 @@ export const useWatchRecommendations = (
       : (video?.category ?? '0');
 
   const {
-    data: searchedVideos = [],
+    data: searchData,
+
     isPending: isSearchPending,
     isError: isSearchError,
-  } = useSearchVideos(searchQuery);
+
+    hasNextPage: hasNextSearchPage,
+    isFetchingNextPage: isFetchingNextSearchPage,
+
+    fetchNextPage: fetchNextSearchPage,
+  } = useInfiniteSearchVideos(searchQuery);
 
   const {
-    data: categoryVideos = [],
+    data: categoryData,
+
     isPending: isCategoryPending,
     isError: isCategoryError,
-  } = usePopularVideos(selectedCategoryId);
+
+    hasNextPage: hasNextCategoryPage,
+    isFetchingNextPage: isFetchingNextCategoryPage,
+
+    fetchNextPage: fetchNextCategoryPage,
+  } = useInfinitePopularVideos(selectedCategoryId);
 
   const {
-    data: trendingVideos = [],
+    data: trendingData,
+
     isPending: isTrendingPending,
     isError: isTrendingError,
-  } = usePopularVideos('0');
+
+    hasNextPage: hasNextTrendingPage,
+    isFetchingNextPage: isFetchingNextTrendingPage,
+
+    fetchNextPage: fetchNextTrendingPage,
+  } = useInfinitePopularVideos('0');
+
+  const searchedVideos = useMemo(
+    () => searchData?.pages.flatMap((page) => page.videos) ?? [],
+    [searchData],
+  );
+
+  const categoryVideos = useMemo(
+    () => categoryData?.pages.flatMap((page) => page.videos) ?? [],
+    [categoryData],
+  );
+
+  const trendingVideos = useMemo(
+    () => trendingData?.pages.flatMap((page) => page.videos) ?? [],
+    [trendingData],
+  );
 
   const recommendationVideos = useMemo(() => {
     if (!video) {
@@ -70,12 +103,21 @@ export const useWatchRecommendations = (
       ]);
     }
 
+    /*
+     * A search filter now falls back to
+     * trending recommendations instead of
+     * ending when its search pages finish.
+     */
     if (selectedFilter.kind === 'search') {
-      return getUniqueRecommendationVideos(searchedVideos, video.id);
+      return mixRecommendationVideos(video, [searchedVideos, trendingVideos]);
     }
 
+    /*
+     * A category filter also falls back to
+     * trending recommendations.
+     */
     if (selectedFilter.kind === 'category') {
-      return getUniqueRecommendationVideos(categoryVideos, video.id);
+      return mixRecommendationVideos(video, [categoryVideos, trendingVideos]);
     }
 
     return getUniqueRecommendationVideos(trendingVideos, video.id);
@@ -89,9 +131,9 @@ export const useWatchRecommendations = (
         isCategoryPending ||
         isTrendingPending
       : selectedFilter.kind === 'search'
-        ? isSearchPending
+        ? isSearchPending || isTrendingPending
         : selectedFilter.kind === 'category'
-          ? isCategoryPending
+          ? isCategoryPending || isTrendingPending
           : isTrendingPending;
 
   const haveAllMixedSourcesFailed =
@@ -101,15 +143,126 @@ export const useWatchRecommendations = (
     selectedFilter.kind === 'mixed'
       ? haveAllMixedSourcesFailed
       : selectedFilter.kind === 'search'
-        ? isSearchError
+        ? isSearchError && isTrendingError
         : selectedFilter.kind === 'category'
-          ? isCategoryError
+          ? isCategoryError && isTrendingError
           : isTrendingError;
+
+  const hasMoreVideos =
+    selectedFilter.kind === 'mixed'
+      ? Boolean(
+          (hasSearchQuery && hasNextSearchPage) ||
+          (selectedCategoryId !== '0' && hasNextCategoryPage) ||
+          hasNextTrendingPage,
+        )
+      : selectedFilter.kind === 'search'
+        ? Boolean(hasNextSearchPage || hasNextTrendingPage)
+        : selectedFilter.kind === 'category'
+          ? Boolean(
+              (selectedCategoryId !== '0' && hasNextCategoryPage) ||
+              hasNextTrendingPage,
+            )
+          : Boolean(hasNextTrendingPage);
+
+  const isLoadingMore =
+    selectedFilter.kind === 'mixed'
+      ? Boolean(
+          (hasSearchQuery && isFetchingNextSearchPage) ||
+          (selectedCategoryId !== '0' && isFetchingNextCategoryPage) ||
+          isFetchingNextTrendingPage,
+        )
+      : selectedFilter.kind === 'search'
+        ? Boolean(isFetchingNextSearchPage || isFetchingNextTrendingPage)
+        : selectedFilter.kind === 'category'
+          ? Boolean(
+              (selectedCategoryId !== '0' && isFetchingNextCategoryPage) ||
+              isFetchingNextTrendingPage,
+            )
+          : isFetchingNextTrendingPage;
+
+  const loadMoreRecommendations = useCallback(async (): Promise<void> => {
+    if (isLoadingMore) {
+      return;
+    }
+
+    const availableSources: Array<() => Promise<unknown>> = [];
+
+    const canLoadSearch =
+      (selectedFilter.kind === 'mixed' || selectedFilter.kind === 'search') &&
+      hasSearchQuery &&
+      hasNextSearchPage;
+
+    const canLoadCategory =
+      (selectedFilter.kind === 'mixed' || selectedFilter.kind === 'category') &&
+      selectedCategoryId !== '0' &&
+      hasNextCategoryPage;
+
+    /*
+     * Trending is the final fallback for
+     * every recommendation filter.
+     */
+    const canLoadTrending = hasNextTrendingPage;
+
+    if (canLoadSearch) {
+      availableSources.push(() =>
+        fetchNextSearchPage({
+          cancelRefetch: false,
+        }),
+      );
+    }
+
+    if (canLoadCategory) {
+      availableSources.push(() =>
+        fetchNextCategoryPage({
+          cancelRefetch: false,
+        }),
+      );
+    }
+
+    if (canLoadTrending) {
+      availableSources.push(() =>
+        fetchNextTrendingPage({
+          cancelRefetch: false,
+        }),
+      );
+    }
+
+    if (availableSources.length === 0) {
+      return;
+    }
+
+    /*
+     * Fetch sources together so one slow or
+     * duplicate-heavy source cannot prevent
+     * the list from growing.
+     */
+    await Promise.all(availableSources.map((fetchSource) => fetchSource()));
+  }, [
+    fetchNextCategoryPage,
+    fetchNextSearchPage,
+    fetchNextTrendingPage,
+
+    hasNextCategoryPage,
+    hasNextSearchPage,
+    hasNextTrendingPage,
+    hasSearchQuery,
+
+    isLoadingMore,
+
+    selectedCategoryId,
+    selectedFilter.kind,
+  ]);
 
   return {
     filters,
+
     selectedFilterId: selectedFilter.id,
+
     videos: recommendationVideos,
+
+    hasMoreVideos,
+    isLoadingMore,
+    loadMoreRecommendations,
 
     isLoading:
       Boolean(video) &&

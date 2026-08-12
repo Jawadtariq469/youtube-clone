@@ -1,10 +1,16 @@
+import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { SearchResults, SearchResultsShimmer } from '../../components/ui';
 import { AppConstants, AppQueryParameters } from '../../constants';
-import { useSearchVideos } from '../../hooks/useSearchVideos';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
+import { useInfiniteSearchVideos } from '../../hooks/useInfiniteSearchVideos';
 
-import { StatusMessage } from './searchResultsView.styles';
+import {
+  InfiniteScrollSentinel,
+  LoadingMoreContainer,
+  StatusMessage,
+} from './searchResultsView.styles';
 
 import type { SearchResultsViewProps } from './types';
 
@@ -16,11 +22,38 @@ const SearchResultsView = ({ onVideoSelect }: SearchResultsViewProps) => {
     AppConstants.EmptyString;
 
   const {
-    data: videos = [],
+    data,
     isPending,
     isError,
     error,
-  } = useSearchVideos(searchQuery);
+
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    fetchNextPage,
+  } = useInfiniteSearchVideos(searchQuery);
+
+  const videos = useMemo(
+    () => data?.pages.flatMap((page) => page.videos) ?? [],
+    [data],
+  );
+
+  const handleLoadMore = useCallback((): void => {
+    if (!hasNextPage || isFetchingNextPage) {
+      return;
+    }
+
+    void fetchNextPage({
+      cancelRefetch: false,
+    });
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  const infiniteScrollRef = useInfiniteScroll({
+    hasNextPage: Boolean(hasNextPage) && !isFetchNextPageError,
+
+    isFetchingNextPage,
+    onLoadMore: handleLoadMore,
+  });
 
   if (!searchQuery) {
     return <StatusMessage>Enter something in the search bar.</StatusMessage>;
@@ -30,7 +63,7 @@ const SearchResultsView = ({ onVideoSelect }: SearchResultsViewProps) => {
     return <SearchResultsShimmer />;
   }
 
-  if (isError) {
+  if (isError && videos.length === 0) {
     return (
       <StatusMessage>
         Failed to load search results:{' '}
@@ -43,7 +76,23 @@ const SearchResultsView = ({ onVideoSelect }: SearchResultsViewProps) => {
     return <StatusMessage>No results found for “{searchQuery}”.</StatusMessage>;
   }
 
-  return <SearchResults videos={videos} onVideoSelect={onVideoSelect} />;
+  return (
+    <>
+      <SearchResults videos={videos} onVideoSelect={onVideoSelect} />
+
+      {isFetchNextPageError && (
+        <StatusMessage>More search results could not be loaded.</StatusMessage>
+      )}
+
+      {isFetchingNextPage && (
+        <LoadingMoreContainer>
+          <SearchResultsShimmer />
+        </LoadingMoreContainer>
+      )}
+
+      <InfiniteScrollSentinel ref={infiniteScrollRef} aria-hidden="true" />
+    </>
+  );
 };
 
 export default SearchResultsView;

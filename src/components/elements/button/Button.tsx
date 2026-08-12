@@ -7,15 +7,7 @@ import { useTheme } from '../../../store/global';
 
 import { StyledButton } from './button.styles';
 
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
-import type { ButtonSizeType, ButtonVariantType } from '../../../utils/enums';
-
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
-  variant?: ButtonVariantType;
-  size?: ButtonSizeType;
-  isFullWidth?: boolean;
-}
+import type { ButtonProps } from './types';
 
 const Button = ({
   children,

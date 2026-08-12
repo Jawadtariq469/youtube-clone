@@ -27,8 +27,18 @@ const WatchRecommendations = ({
       ? filterSelection.filterId
       : ALL_FILTER_ID;
 
-  const { filters, selectedFilterId, videos, isLoading, isError } =
-    useWatchRecommendations(video, requestedFilterId);
+  const {
+    filters,
+    selectedFilterId,
+    videos,
+
+    hasMoreVideos,
+    isLoadingMore,
+    loadMoreRecommendations,
+
+    isLoading,
+    isError,
+  } = useWatchRecommendations(video, requestedFilterId);
 
   const handleFilterSelect = (filterId: string): void => {
     setFilterSelection({
@@ -39,11 +49,15 @@ const WatchRecommendations = ({
 
   return (
     <RelatedVideos
+      key={`${currentVideoId}-${selectedFilterId}`}
       videos={videos}
       filters={filters}
       selectedFilterId={selectedFilterId}
       onVideoSelect={onVideoSelect}
       onFilterSelect={handleFilterSelect}
+      hasMoreVideos={hasMoreVideos}
+      isLoadingMore={isLoadingMore}
+      onLoadMore={loadMoreRecommendations}
       isLoading={isVideoLoading || isLoading}
       isError={isError}
     />

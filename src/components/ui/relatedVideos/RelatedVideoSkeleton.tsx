@@ -6,12 +6,18 @@ import {
   RelatedVideosList,
 } from './relatedVideos.styles';
 
-const SKELETON_ITEMS_COUNT = 7;
+import type { RelatedVideosSkeletonProps } from './types';
 
-const RelatedVideosSkeleton = () => {
+const DEFAULT_SKELETON_ITEM_COUNT = 7;
+
+const RelatedVideosSkeleton = ({
+  itemCount = DEFAULT_SKELETON_ITEM_COUNT,
+}: RelatedVideosSkeletonProps) => {
   return (
     <RelatedVideosList aria-label="Loading recommendations" aria-busy="true">
-      {Array.from({ length: SKELETON_ITEMS_COUNT }).map((_, index) => (
+      {Array.from({
+        length: itemCount,
+      }).map((_, index) => (
         <RelatedSkeletonItem key={index}>
           <Skeleton aspectRatio="16 / 9" borderRadius="8px" />
 

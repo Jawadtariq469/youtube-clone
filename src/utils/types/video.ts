@@ -10,3 +10,7 @@ export type Video = {
   category: string;
   description?: string;
 };
+export type VideoPage = {
+  videos: Video[];
+  nextPageToken?: string;
+};

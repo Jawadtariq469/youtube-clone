@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { CategoryBar, VideoGrid, VideoGridShimmer } from '../../components/ui';
-import { usePopularVideos } from '../../hooks/usePopularVideos';
+import { useInfinitePopularVideos } from '../../hooks/useInfinitePopularVideos';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 
-import { StatusMessage } from './homeView.styles';
+import {
+  InfiniteScrollSentinel,
+  LoadingMoreContainer,
+  StatusMessage,
+} from './homeView.styles';
 
 import type { CategoryOption, HomeViewProps } from './types';
 
@@ -46,11 +51,40 @@ const HomeView = ({ onVideoSelect }: HomeViewProps) => {
   const [selectedCategory, setSelectedCategory] = useState('0');
 
   const {
-    data: videos = [],
+    data,
     isPending,
     isError,
     error,
-  } = usePopularVideos(selectedCategory);
+
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    fetchNextPage,
+  } = useInfinitePopularVideos(selectedCategory);
+
+  const videos = useMemo(
+    () => data?.pages.flatMap((page) => page.videos) ?? [],
+    [data],
+  );
+
+  const handleLoadMore = useCallback((): void => {
+    if (!hasNextPage || isFetchingNextPage) {
+      return;
+    }
+
+    void fetchNextPage({
+      cancelRefetch: false,
+    });
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  const infiniteScrollRef = useInfiniteScroll({
+    hasNextPage: Boolean(hasNextPage) && !isFetchNextPageError,
+
+    isFetchingNextPage,
+    onLoadMore: handleLoadMore,
+  });
+
+  const hasInitialError = isError && videos.length === 0;
 
   return (
     <>
@@ -61,7 +95,8 @@ const HomeView = ({ onVideoSelect }: HomeViewProps) => {
       />
 
       {isPending && <VideoGridShimmer />}
-      {isError && (
+
+      {hasInitialError && (
         <StatusMessage>
           Failed to load videos:{' '}
           {error instanceof Error ? error.message : 'Unknown error'}
@@ -72,8 +107,22 @@ const HomeView = ({ onVideoSelect }: HomeViewProps) => {
         <StatusMessage>No videos found.</StatusMessage>
       )}
 
-      {!isPending && !isError && videos.length > 0 && (
+      {!isPending && videos.length > 0 && (
         <VideoGrid videos={videos} onVideoSelect={onVideoSelect} />
+      )}
+
+      {isFetchNextPageError && (
+        <StatusMessage>More videos could not be loaded.</StatusMessage>
+      )}
+
+      {isFetchingNextPage && (
+        <LoadingMoreContainer>
+          <VideoGridShimmer />
+        </LoadingMoreContainer>
+      )}
+
+      {videos.length > 0 && (
+        <InfiniteScrollSentinel ref={infiniteScrollRef} aria-hidden="true" />
       )}
     </>
   );

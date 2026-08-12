@@ -1,6 +1,5 @@
 import type { RecommendationFilter, Video } from './types';
 
-const MAX_RECOMMENDATIONS = 20;
 const MAX_SIMILAR_TITLE_VIDEOS = 2;
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -224,8 +223,10 @@ const hasVerySimilarTitle = (
 export const getUniqueRecommendationVideos = (
   videos: readonly Video[],
   currentVideoId: string,
-  limit = MAX_RECOMMENDATIONS,
+  limit?: number,
 ): Video[] => {
+  const maximumVideos = limit ?? Number.POSITIVE_INFINITY;
+
   const selectedVideos: Video[] = [];
   const usedVideoIds = new Set([currentVideoId]);
 
@@ -237,7 +238,7 @@ export const getUniqueRecommendationVideos = (
     usedVideoIds.add(video.id);
     selectedVideos.push(video);
 
-    if (selectedVideos.length >= limit) {
+    if (selectedVideos.length >= maximumVideos) {
       break;
     }
   }
@@ -248,9 +249,12 @@ export const getUniqueRecommendationVideos = (
 export const mixRecommendationVideos = (
   currentVideo: Video,
   videoGroups: readonly (readonly Video[])[],
-  limit = MAX_RECOMMENDATIONS,
+  limit?: number,
 ): Video[] => {
+  const maximumVideos = limit ?? Number.POSITIVE_INFINITY;
+
   const mixedVideos: Video[] = [];
+
   const usedVideoIds = new Set([currentVideo.id]);
 
   const groupPositions = videoGroups.map(() => 0);
@@ -258,7 +262,7 @@ export const mixRecommendationVideos = (
   let similarTitleVideosCount = 0;
 
   while (
-    mixedVideos.length < limit &&
+    mixedVideos.length < maximumVideos &&
     groupPositions.some(
       (position, index) => position < videoGroups[index].length,
     )
@@ -266,7 +270,7 @@ export const mixRecommendationVideos = (
     videoGroups.forEach((videoGroup, groupIndex) => {
       while (
         groupPositions[groupIndex] < videoGroup.length &&
-        mixedVideos.length < limit
+        mixedVideos.length < maximumVideos
       ) {
         const video = videoGroup[groupPositions[groupIndex]];
 

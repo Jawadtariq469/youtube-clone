@@ -32,3 +32,6 @@ export interface RecommendationSelection {
   videoId: string;
   filterId: string;
 }
+export interface WatchCommentsProps {
+  videoId: string;
+}

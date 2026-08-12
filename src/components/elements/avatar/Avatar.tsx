@@ -8,7 +8,7 @@ import { AvatarButton, AvatarFallback, AvatarImage } from './avatar.styles';
 
 import type { AvatarProps } from './types';
 
-const getInitials = (name: string) => {
+const getInitials = (name: string): string => {
   const initials = name
     .trim()
     .split(/\s+/)
@@ -32,16 +32,46 @@ const Avatar = ({
   const { theme } = useTheme();
 
   const shouldDisplayImage = Boolean(src) && failedImageSrc !== src;
+  const isInteractive = typeof buttonProps.onClick === 'function';
 
-  const handleImageError = () => {
+  const handleImageError = (): void => {
     if (src) {
       setFailedImageSrc(src);
     }
   };
 
-  const handleImageLoad = () => {
+  const handleImageLoad = (): void => {
     setFailedImageSrc(null);
   };
+
+  const avatarContent = shouldDisplayImage ? (
+    <AvatarImage
+      src={src}
+      alt=""
+      draggable={false}
+      onLoad={handleImageLoad}
+      onError={handleImageError}
+    />
+  ) : (
+    <AvatarFallback $appTheme={theme} $size={size}>
+      {getInitials(name)}
+    </AvatarFallback>
+  );
+
+  if (!isInteractive) {
+    return (
+      <AvatarButton
+        as="span"
+        role="img"
+        aria-label={label}
+        $appTheme={theme}
+        $size={size}
+        style={{ cursor: 'default' }}
+      >
+        {avatarContent}
+      </AvatarButton>
+    );
+  }
 
   return (
     <AvatarButton
@@ -51,19 +81,7 @@ const Avatar = ({
       $appTheme={theme}
       $size={size}
     >
-      {shouldDisplayImage ? (
-        <AvatarImage
-          src={src}
-          alt={name}
-          draggable={false}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-        />
-      ) : (
-        <AvatarFallback $appTheme={theme} $size={size}>
-          {getInitials(name)}
-        </AvatarFallback>
-      )}
+      {avatarContent}
     </AvatarButton>
   );
 };

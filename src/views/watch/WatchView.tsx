@@ -6,7 +6,7 @@ import { useVideoDetails } from '../../hooks/useVideoDetails';
 
 import WatchInformation from './WatchInformation';
 import WatchRecommendations from './WatchRecommendations';
-
+import WatchComments from './WatchComments';
 import {
   PrimaryColumn,
   RecommendationsColumn,
@@ -59,6 +59,10 @@ const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
             isError={isError}
             error={error}
           />
+
+          {!isPending && !isError && video && (
+            <WatchComments key={video.id} videoId={video.id} />
+          )}
         </PrimaryColumn>
 
         <RecommendationsColumn>

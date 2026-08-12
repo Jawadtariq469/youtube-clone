@@ -10,7 +10,9 @@ export { default as VideoGridShimmer } from './videoGridShimmer/VideoGridShimmer
 export { default as SearchResultsShimmer } from './searchResultShimmer/SearchResult';
 export { default as VideoPlayer } from './videoPlayer/VideoPlayer';
 export { default as RelatedVideos } from './relatedVideos/RelatedVideos';
-
+export { default as Comments } from './comment/Comment';
+export { default as ProfileMenu } from './profileMenu/ProfileMenu';
+export type { CommentsProps } from './comment/types';
 export type { RelatedVideosProps } from './relatedVideos/types';
 export type { VideoPlayerProps } from './videoPlayer/types';
 export type { SearchResultCardProps } from './searchResultCard/types';

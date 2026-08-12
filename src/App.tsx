@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
-
+import { useScrollToTop } from './hooks/useScrollToTop';
 import { Header, Sidebar } from './components/ui';
 import { AppQueryParameters, AppRoutes } from './constants';
 import { useSidebar, useTheme } from './store/global';
 import HomeView from './views/home/HomeView';
 import SearchResultsView from './views/searchResult/SearchResultsView';
 import WatchView from './views/watch/WatchView';
-
+import { useAuthObserver } from './store/auth';
 import { WatchSidebarBackdrop, WatchSidebarDrawer } from './App.styles';
 
 const App = () => {
+  useAuthObserver();
+  useScrollToTop();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,11 +54,6 @@ const App = () => {
     });
 
     navigate(`${AppRoutes.Watch}?${searchParameters.toString()}`);
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
   };
 
   const handleMenuClick = (): void => {
@@ -78,7 +75,6 @@ const App = () => {
   return (
     <>
       <Header
-        userName="GU"
         currentSearchValue={currentSearchValue}
         onSearch={handleSearch}
         onMenuClick={handleMenuClick}

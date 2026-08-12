@@ -1,10 +1,6 @@
 import type { AppTheme } from '../../../theme';
 
 export interface HeaderProps {
-  userName: string;
-
-  userAvatarUrl?: string;
-
   currentSearchValue?: string;
 
   onSearch: (searchValue: string) => void;
@@ -16,8 +12,6 @@ export interface HeaderProps {
   onCreateClick?: () => void;
 
   onNotificationsClick?: () => void;
-
-  onProfileClick?: () => void;
 }
 
 export interface HeaderThemeProps {

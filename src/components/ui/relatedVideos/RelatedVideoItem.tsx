@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useTheme } from '../../../store/global';
 import {
   formatPublishedAt,
@@ -13,6 +15,7 @@ import {
   RelatedVideoTitle,
   Thumbnail,
   ThumbnailContainer,
+  ThumbnailFallback,
 } from './relatedVideos.styles';
 
 import type { RelatedVideoItemProps } from './types';
@@ -20,8 +23,24 @@ import type { RelatedVideoItemProps } from './types';
 const RelatedVideoItem = ({ video, onVideoSelect }: RelatedVideoItemProps) => {
   const { theme } = useTheme();
 
+  const [thumbnailSource, setThumbnailSource] = useState(video.thumbnailUrl);
+
+  const [isThumbnailUnavailable, setIsThumbnailUnavailable] = useState(false);
+
+  const fallbackThumbnailUrl = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+
   const handleVideoSelect = (): void => {
     onVideoSelect(video.id);
+  };
+
+  const handleThumbnailError = (): void => {
+    if (thumbnailSource !== fallbackThumbnailUrl) {
+      setThumbnailSource(fallbackThumbnailUrl);
+
+      return;
+    }
+
+    setIsThumbnailUnavailable(true);
   };
 
   return (
@@ -32,7 +51,21 @@ const RelatedVideoItem = ({ video, onVideoSelect }: RelatedVideoItemProps) => {
       onClick={handleVideoSelect}
     >
       <ThumbnailContainer>
-        <Thumbnail src={video.thumbnailUrl} alt={video.title} loading="lazy" />
+        {isThumbnailUnavailable ? (
+          <ThumbnailFallback
+            role="img"
+            aria-label={`Thumbnail unavailable for ${video.title}`}
+          >
+            Thumbnail unavailable
+          </ThumbnailFallback>
+        ) : (
+          <Thumbnail
+            src={thumbnailSource}
+            alt={video.title}
+            loading="lazy"
+            onError={handleThumbnailError}
+          />
+        )}
 
         {video.duration && <Duration>{video.duration}</Duration>}
       </ThumbnailContainer>

@@ -3,9 +3,9 @@ import { isAxiosError } from 'axios';
 import { youtubeApi } from '../../config';
 
 import { mapYoutubeVideo } from './mapYoutubeVideo';
-import { searchVideos } from './searchVideos';
+import { searchVideosPage } from './searchVideos';
 
-import type { Video } from '../../utils/types';
+import type { Video, VideoPage } from '../../utils/types';
 import type { YouTubeVideosResponse } from './types';
 
 const DEFAULT_CATEGORY_ID = '0';
@@ -38,33 +38,58 @@ const isUnavailableChartError = (error: unknown): boolean => {
   return responseStatus === 400 || responseStatus === 404;
 };
 
-export const getPopularVideos = async (
+export const getPopularVideosPage = async (
   categoryId = DEFAULT_CATEGORY_ID,
-): Promise<Video[]> => {
+  pageToken = '',
+): Promise<VideoPage> => {
   try {
     const response = await youtubeApi.get<YouTubeVideosResponse>('/videos', {
       params: {
         part: 'snippet,contentDetails,statistics',
         chart: 'mostPopular',
         maxResults: MAX_RESULTS,
+
         regionCode: import.meta.env.VITE_YOUTUBE_REGION_CODE,
+
         videoCategoryId: categoryId,
+        pageToken: pageToken || undefined,
       },
     });
 
-    return response.data.items.map(mapYoutubeVideo);
+    const nextPageToken = response.data.nextPageToken;
+
+    return {
+      videos: response.data.items.map(mapYoutubeVideo),
+
+      ...(nextPageToken
+        ? {
+            nextPageToken,
+          }
+        : {}),
+    };
   } catch (error: unknown) {
     const categorySearchQuery = CATEGORY_SEARCH_QUERIES[categoryId];
 
-    const canUseSearchFallback =
-      categoryId !== DEFAULT_CATEGORY_ID &&
-      Boolean(categorySearchQuery) &&
-      isUnavailableChartError(error);
-
-    if (!canUseSearchFallback) {
+    if (
+      categoryId === DEFAULT_CATEGORY_ID ||
+      !categorySearchQuery ||
+      !isUnavailableChartError(error)
+    ) {
       throw error;
     }
 
-    return searchVideos(categorySearchQuery);
+    return searchVideosPage(categorySearchQuery, pageToken);
   }
+};
+
+/**
+ * Preserves the original function for components
+ * that only need the first page.
+ */
+export const getPopularVideos = async (
+  categoryId = DEFAULT_CATEGORY_ID,
+): Promise<Video[]> => {
+  const firstPage = await getPopularVideosPage(categoryId);
+
+  return firstPage.videos;
 };

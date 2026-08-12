@@ -53,3 +53,76 @@ export type YouTubeSearchResponse = {
   }>;
 };
 export type SearchSuggestionsResponse = [string, string[], ...unknown[]];
+export type YouTubeCommentThreadItem = {
+  id: string;
+
+  snippet: {
+    totalReplyCount: number;
+
+    topLevelComment: {
+      id: string;
+
+      snippet: {
+        authorDisplayName: string;
+        authorProfileImageUrl: string;
+
+        textDisplay: string;
+
+        likeCount: number;
+
+        publishedAt: string;
+        updatedAt: string;
+      };
+    };
+  };
+};
+
+export type YouTubeCommentThreadsResponse = {
+  nextPageToken?: string;
+
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+
+  items: YouTubeCommentThreadItem[];
+};
+export type YouTubeApiErrorResponse = {
+  error?: {
+    code?: number;
+    message?: string;
+
+    errors?: Array<{
+      reason?: string;
+      message?: string;
+    }>;
+  };
+};
+export type YouTubeCommentItem = {
+  id: string;
+
+  snippet: {
+    authorDisplayName: string;
+    authorProfileImageUrl: string;
+
+    textDisplay: string;
+
+    likeCount: number;
+
+    publishedAt: string;
+    updatedAt: string;
+
+    parentId?: string;
+  };
+};
+
+export type YouTubeCommentsResponse = {
+  nextPageToken?: string;
+
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+
+  items: YouTubeCommentItem[];
+};
