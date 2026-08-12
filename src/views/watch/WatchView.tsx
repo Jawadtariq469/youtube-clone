@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router';
-
+import { useRecordWatchHistory } from '../../store/history';
 import { VideoPlayer } from '../../components/ui';
 import { AppConstants, AppQueryParameters } from '../../constants';
 import { useVideoDetails } from '../../hooks/useVideoDetails';
@@ -34,7 +34,7 @@ const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
     isError,
     error,
   } = useVideoDetails(isValidVideoId ? videoId : AppConstants.EmptyString);
-
+  useRecordWatchHistory(video);
   if (!videoId) {
     return <StatusMessage>No video was selected.</StatusMessage>;
   }

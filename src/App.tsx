@@ -9,9 +9,12 @@ import SearchResultsView from './views/searchResult/SearchResultsView';
 import WatchView from './views/watch/WatchView';
 import { useAuthObserver } from './store/auth';
 import { WatchSidebarBackdrop, WatchSidebarDrawer } from './App.styles';
+import { useHistoryObserver } from './store/history';
 
+import HistoryView from './views/history/HistoryView';
 const App = () => {
   useAuthObserver();
+  useHistoryObserver();
   useScrollToTop();
   const navigate = useNavigate();
   const location = useLocation();
@@ -138,6 +141,10 @@ const App = () => {
             <Route
               path={AppRoutes.Watch}
               element={<WatchView onVideoSelect={handleVideoSelect} />}
+            />
+            <Route
+              path={AppRoutes.History}
+              element={<HistoryView onVideoSelect={handleVideoSelect} />}
             />
           </Routes>
         </main>

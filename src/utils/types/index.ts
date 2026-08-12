@@ -3,3 +3,4 @@ export * from './icon';
 export * from './video';
 export * from './recommendation';
 export * from './comment';
+export * from './watchHistory';
