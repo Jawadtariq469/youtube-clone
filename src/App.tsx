@@ -1,31 +1,45 @@
 import { useState } from 'react';
+
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
-import { useScrollToTop } from './hooks/useScrollToTop';
+
 import { Header, Sidebar } from './components/ui';
+
 import { AppQueryParameters, AppRoutes } from './constants';
-import { useSidebar, useTheme } from './store/global';
-import HomeView from './views/home/HomeView';
-import SearchResultsView from './views/searchResult/SearchResultsView';
-import WatchView from './views/watch/WatchView';
+
 import { useAuthObserver } from './store/auth';
-import { WatchSidebarBackdrop, WatchSidebarDrawer } from './App.styles';
+
 import { useHistoryObserver } from './store/history';
 
+import { useSidebar, useTheme } from './store/global';
+
+import { useScrollToTop } from './hooks/useScrollToTop';
+
 import HistoryView from './views/history/HistoryView';
+import HomeView from './views/home/HomeView';
+import SearchResultsView from './views/searchResult/SearchResultsView';
+import ShortsView from './views/ShortView';
+import WatchView from './views/watch/WatchView';
+
+import { WatchSidebarBackdrop, WatchSidebarDrawer } from './App.styles';
+
 const App = () => {
   useAuthObserver();
   useHistoryObserver();
   useScrollToTop();
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const { isSidebarOpen, toggleSidebar } = useSidebar();
+
   const { theme } = useTheme();
 
   const [openWatchSidebarLocationKey, setOpenWatchSidebarLocationKey] =
     useState<string | null>(null);
 
   const isWatchPage = location.pathname === AppRoutes.Watch;
+
+  const isShortsPage = location.pathname === AppRoutes.Shorts;
 
   const isWatchSidebarOpen =
     isWatchPage && openWatchSidebarLocationKey === location.key;
@@ -75,6 +89,12 @@ const App = () => {
     setOpenWatchSidebarLocationKey(null);
   };
 
+  const mainPadding = isWatchPage
+    ? '12px 24px 40px'
+    : isShortsPage
+      ? '0'
+      : `12px ${theme.spacing.xxxl} ${theme.spacing.xxxl}`;
+
   return (
     <>
       <Header
@@ -116,14 +136,17 @@ const App = () => {
           style={{
             flex: 1,
             minWidth: 0,
+
             minHeight: `calc(
               100vh - ${theme.header.height.desktop}
             )`,
-            padding: isWatchPage
-              ? '12px 24px 40px'
-              : `12px ${theme.spacing.xxxl} ${theme.spacing.xxxl}`,
+
+            padding: mainPadding,
+
             color: theme.colors.text.primary,
+
             backgroundColor: theme.colors.background.page,
+
             fontFamily: theme.font.family.primary,
           }}
         >
@@ -131,6 +154,11 @@ const App = () => {
             <Route
               path={AppRoutes.Home}
               element={<HomeView onVideoSelect={handleVideoSelect} />}
+            />
+
+            <Route
+              path={AppRoutes.Shorts}
+              element={<ShortsView onVideoSelect={handleVideoSelect} />}
             />
 
             <Route
@@ -142,6 +170,7 @@ const App = () => {
               path={AppRoutes.Watch}
               element={<WatchView onVideoSelect={handleVideoSelect} />}
             />
+
             <Route
               path={AppRoutes.History}
               element={<HistoryView onVideoSelect={handleVideoSelect} />}
