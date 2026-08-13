@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import type { AppTheme } from '../theme';
+import type { AppTheme } from '../../theme';
 
 interface ShortsThemeProps {
   $appTheme: AppTheme;

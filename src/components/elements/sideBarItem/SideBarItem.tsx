@@ -17,7 +17,7 @@ const SidebarItem = ({
   return (
     <SidebarItemLink
       {...linkProps}
-      href={href}
+      to={href}
       aria-label={label}
       aria-current={isActive ? 'page' : undefined}
       title={!isExpanded ? label : undefined}

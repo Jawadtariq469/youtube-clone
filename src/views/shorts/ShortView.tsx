@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { ShortVideo, ShortVideoSkeleton } from '../components/ui';
+import { ShortVideo, ShortVideoSkeleton } from '../../components/ui';
 
-import { useInfiniteShortVideos } from '../hooks/useInfiniteShortVideos';
+import { useInfiniteShortVideos } from '../../hooks/useInfiniteShortVideos';
 
-import { useTheme } from '../store/global';
+import { useTheme } from '../../store/global';
 
 import {
   ShortsFeed,
@@ -12,11 +12,11 @@ import {
   ShortsPage,
   ShortsStatusMessage,
   ShortsStatusPanel,
-} from './shortView.styles';
+} from './../shorts/shortView.styles';
 
-import type { Video } from '../utils/types';
+import type { Video } from '../../utils/types';
 
-import type { ShortsViewProps } from './types';
+import type { ShortsViewProps } from './../shorts/types';
 
 const ACTIVE_VIDEO_THRESHOLD = 0.65;
 

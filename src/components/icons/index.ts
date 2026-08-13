@@ -14,3 +14,4 @@ export {
   PlayFilledIcon,
   ShareOutlineIcon,
 } from './ShortsActionsIcons';
+export { MoonIcon, SunIcon } from './ThemeIcons';

@@ -1,25 +1,16 @@
 import { useState } from 'react';
-
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
-
 import { Header, Sidebar } from './components/ui';
-
 import { AppQueryParameters, AppRoutes } from './constants';
-
 import { useAuthObserver } from './store/auth';
-
 import { useHistoryObserver } from './store/history';
-
 import { useSidebar, useTheme } from './store/global';
-
 import { useScrollToTop } from './hooks/useScrollToTop';
-
 import HistoryView from './views/history/HistoryView';
 import HomeView from './views/home/HomeView';
 import SearchResultsView from './views/searchResult/SearchResultsView';
-import ShortsView from './views/ShortView';
+import ShortsView from './views/shorts/ShortView';
 import WatchView from './views/watch/WatchView';
-
 import { WatchSidebarBackdrop, WatchSidebarDrawer } from './App.styles';
 
 const App = () => {

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-
+import { Link } from 'react-router';
 import type { StyledSidebarItemProps } from './types';
 
-export const SidebarItemLink = styled.a<StyledSidebarItemProps>`
+export const SidebarItemLink = styled(Link)<StyledSidebarItemProps>`
   display: flex;
   align-items: center;
 

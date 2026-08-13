@@ -6,8 +6,16 @@ import { setThemeMode, toggleSidebar, toggleTheme } from './action';
 
 import type { GlobalState } from './types';
 
+const THEME_STORAGE_KEY = 'youtube-clone-theme';
+
+const getInitialThemeMode = (): ThemeMode => {
+  const savedThemeMode = localStorage.getItem(THEME_STORAGE_KEY);
+
+  return savedThemeMode === ThemeMode.Dark ? ThemeMode.Dark : ThemeMode.Light;
+};
+
 const initialState: GlobalState = {
-  mode: ThemeMode.Light,
+  mode: getInitialThemeMode(),
   isSidebarOpen: true,
 };
 
