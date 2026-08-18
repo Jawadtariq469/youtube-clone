@@ -17,12 +17,26 @@ export const ShortActionsContainer = styled.div`
 
   @media (max-width: 760px) {
     position: absolute;
-    right: 12px;
-    bottom: 88px;
+
+    right: max(10px, env(safe-area-inset-right));
+
+    bottom: calc(88px + env(safe-area-inset-bottom));
 
     z-index: 4;
 
     gap: 14px;
+  }
+
+  @media (max-width: 480px) {
+    right: max(8px, env(safe-area-inset-right));
+
+    gap: 12px;
+  }
+
+  @media (max-width: 760px) and (max-height: 700px) {
+    bottom: calc(70px + env(safe-area-inset-bottom));
+
+    gap: 10px;
   }
 `;
 
@@ -32,8 +46,9 @@ export const ShortActionButton = styled.button<ShortActionButtonProps>`
   flex-direction: column;
   gap: 5px;
 
-  padding: 0;
+  flex-shrink: 0;
 
+  padding: 0;
   border: none;
 
   color: ${({ $appTheme }) => $appTheme.colors.text.primary};
@@ -43,12 +58,17 @@ export const ShortActionButton = styled.button<ShortActionButtonProps>`
   font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
 
   cursor: pointer;
+  touch-action: manipulation;
 
   &:focus-visible {
-    outline: 2px solid ${({ $appTheme }) => $appTheme.colors.text.primary};
-
+    outline: 2px solid currentColor;
     outline-offset: 4px;
+
     border-radius: 50%;
+  }
+
+  @media (max-width: 760px) {
+    color: #ffffff;
   }
 `;
 
@@ -71,16 +91,34 @@ export const ShortActionIcon = styled.span<ShortActionButtonProps>`
     background-color 150ms ease,
     transform 150ms ease;
 
-  ${ShortActionButton}:hover & {
-    background-color: ${({ $appTheme }) => $appTheme.colors.background.active};
+  @media (hover: hover) and (pointer: fine) {
+    ${ShortActionButton}:hover & {
+      background-color: ${({ $appTheme }) =>
+        $appTheme.colors.background.active};
 
-    transform: scale(1.05);
+      transform: scale(1.05);
+    }
   }
 
   @media (max-width: 760px) {
     color: ${({ $isActive }) => ($isActive ? '#ff4e6d' : '#ffffff')};
 
-    background-color: rgb(0 0 0 / 55%);
+    background-color: rgb(0 0 0 / 58%);
+  }
+
+  @media (max-width: 480px) {
+    width: 44px;
+    height: 44px;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  @media (max-width: 760px) and (max-height: 700px) {
+    width: 40px;
+    height: 40px;
   }
 `;
 
@@ -92,6 +130,10 @@ export const ShortActionLabel = styled.span`
     color: #ffffff;
 
     text-shadow: 0 1px 3px rgb(0 0 0 / 70%);
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
   }
 `;
 

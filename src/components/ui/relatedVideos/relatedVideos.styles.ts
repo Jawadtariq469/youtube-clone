@@ -262,20 +262,20 @@ export const ShowMoreContainer = styled.div`
   display: none;
 
   width: 100%;
-
   margin-top: 16px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     display: block;
   }
 `;
+
 export const DesktopInfiniteScrollSentinel = styled.div`
   display: block;
 
   width: 100%;
   height: 1px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) {
     display: none;
   }
 `;

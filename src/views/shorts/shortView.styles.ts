@@ -8,6 +8,7 @@ interface ShortsThemeProps {
 
 export const ShortsPage = styled.section`
   width: 100%;
+  min-width: 0;
 
   overflow: hidden;
 `;
@@ -27,6 +28,9 @@ export const ShortsFeed = styled.div<ShortsThemeProps>`
 
   scrollbar-width: none;
 
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -43,7 +47,13 @@ export const ShortsStatusPanel = styled.div<ShortsThemeProps>`
     100vh - ${({ $appTheme }) => $appTheme.header.height.desktop}
   );
 
+  min-height: calc(
+    100dvh - ${({ $appTheme }) => $appTheme.header.height.desktop}
+  );
+
   padding: 24px;
+
+  box-sizing: border-box;
 `;
 
 export const ShortsStatusMessage = styled.p`
@@ -53,6 +63,7 @@ export const ShortsStatusMessage = styled.p`
 
   font-size: 15px;
   line-height: 1.5;
+  text-align: center;
 
   opacity: 0.75;
 `;

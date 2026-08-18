@@ -6,7 +6,6 @@ import type { YouTubeVideoItem } from './types';
 
 export const mapYoutubeVideo = (item: YouTubeVideoItem): Video => {
   const thumbnail =
-    item.snippet.thumbnails.maxres ??
     item.snippet.thumbnails.standard ??
     item.snippet.thumbnails.high ??
     item.snippet.thumbnails.medium ??

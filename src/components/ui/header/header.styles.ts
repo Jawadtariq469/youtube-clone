@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import { Link } from 'react-router';
 import type { HeaderThemeProps } from './types';
 
 export const HeaderContainer = styled.header<HeaderThemeProps>`
@@ -25,6 +25,22 @@ export const HeaderContainer = styled.header<HeaderThemeProps>`
     ${({ $appTheme }) => $appTheme.colors.border.subtle};
 
   box-sizing: border-box;
+  @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.md}px) {
+    padding-inline: ${({ $appTheme }) => $appTheme.spacing.sm};
+
+    gap: ${({ $appTheme }) => $appTheme.spacing.sm};
+  }
+
+  @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.sm}px) {
+    padding-inline: ${({ $appTheme }) => $appTheme.spacing.xs};
+
+    gap: ${({ $appTheme }) => $appTheme.spacing.xs};
+  }
+  @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.md}px) {
+    padding-inline: ${({ $appTheme }) => $appTheme.spacing.xs};
+
+    gap: ${({ $appTheme }) => $appTheme.spacing.xs};
+  }
 `;
 
 export const HeaderLeft = styled.div<HeaderThemeProps>`
@@ -35,10 +51,10 @@ export const HeaderLeft = styled.div<HeaderThemeProps>`
   gap: ${({ $appTheme }) => $appTheme.spacing.sm};
 `;
 
-export const BrandLink = styled.a<HeaderThemeProps>`
+export const BrandLink = styled(Link)<HeaderThemeProps>`
   display: inline-flex;
   align-items: center;
-
+  flex-shrink: 0;
   gap: ${({ $appTheme }) => $appTheme.spacing.xs};
 
   color: ${({ $appTheme }) => $appTheme.colors.text.primary};
@@ -48,10 +64,15 @@ export const BrandLink = styled.a<HeaderThemeProps>`
 
 export const BrandIcon = styled.span<HeaderThemeProps>`
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 
   color: ${({ $appTheme }) => $appTheme.colors.brand.primary};
 
   svg {
+    display: block;
+
     width: 28px;
     height: 20px;
   }
@@ -63,16 +84,10 @@ export const BrandIcon = styled.span<HeaderThemeProps>`
 
 export const BrandText = styled.span<HeaderThemeProps>`
   font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
-
   font-size: ${({ $appTheme }) => $appTheme.font.size.xl};
-
   font-weight: ${({ $appTheme }) => $appTheme.font.weight.bold};
 
   letter-spacing: -1px;
-
-  @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.sm}px) {
-    display: none;
-  }
 `;
 
 export const HeaderCenter = styled.div<HeaderThemeProps>`
@@ -89,6 +104,10 @@ export const HeaderCenter = styled.div<HeaderThemeProps>`
   @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.md}px) {
     margin-inline: ${({ $appTheme }) => $appTheme.spacing.xs};
   }
+  @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.md}px) {
+    gap: 0;
+    margin-inline: 0;
+  }
 `;
 
 export const HeaderRight = styled.div<HeaderThemeProps>`
@@ -97,6 +116,9 @@ export const HeaderRight = styled.div<HeaderThemeProps>`
   flex-shrink: 0;
 
   gap: ${({ $appTheme }) => $appTheme.spacing.sm};
+  @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.md}px) {
+    gap: 0;
+  }
 `;
 
 export const VoiceSearchAction = styled.div<HeaderThemeProps>`
@@ -111,6 +133,13 @@ export const CreateAction = styled.div<HeaderThemeProps>`
   display: flex;
 
   @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.lg}px) {
+    display: none;
+  }
+`;
+export const NotificationAction = styled.div<HeaderThemeProps>`
+  display: flex;
+
+  @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.md}px) {
     display: none;
   }
 `;

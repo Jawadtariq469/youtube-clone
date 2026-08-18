@@ -1,17 +1,26 @@
 import { useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
+
 import { Header, Sidebar } from './components/ui';
 import { AppQueryParameters, AppRoutes } from './constants';
-import { useAuthObserver } from './store/auth';
-import { useHistoryObserver } from './store/history';
-import { useSidebar, useTheme } from './store/global';
 import { useScrollToTop } from './hooks/useScrollToTop';
+import { useAuthObserver } from './store/auth';
+import { useSidebar, useTheme } from './store/global';
+import { useHistoryObserver } from './store/history';
+
 import HistoryView from './views/history/HistoryView';
 import HomeView from './views/home/HomeView';
 import SearchResultsView from './views/searchResult/SearchResultsView';
 import ShortsView from './views/shorts/ShortView';
 import WatchView from './views/watch/WatchView';
-import { WatchSidebarBackdrop, WatchSidebarDrawer } from './App.styles';
+
+import {
+  AppLayout,
+  DesktopSidebarSlot,
+  MainContent,
+  NavigationBackdrop,
+  NavigationDrawer,
+} from './App.styles';
 
 const App = () => {
   useAuthObserver();
@@ -25,15 +34,15 @@ const App = () => {
 
   const { theme } = useTheme();
 
-  const [openWatchSidebarLocationKey, setOpenWatchSidebarLocationKey] =
-    useState<string | null>(null);
+  const [openDrawerLocationKey, setOpenDrawerLocationKey] = useState<
+    string | null
+  >(null);
 
   const isWatchPage = location.pathname === AppRoutes.Watch;
 
   const isShortsPage = location.pathname === AppRoutes.Shorts;
 
-  const isWatchSidebarOpen =
-    isWatchPage && openWatchSidebarLocationKey === location.key;
+  const isNavigationDrawerOpen = openDrawerLocationKey === location.key;
 
   const currentSearchValue =
     location.pathname === AppRoutes.Results
@@ -65,26 +74,24 @@ const App = () => {
   };
 
   const handleMenuClick = (): void => {
-    if (!isWatchPage) {
-      toggleSidebar();
+    const isMobileViewport = window.matchMedia(
+      `(max-width: ${theme.breakpoint.md}px)`,
+    ).matches;
+
+    if (isMobileViewport || isWatchPage) {
+      setOpenDrawerLocationKey((currentKey) =>
+        currentKey === location.key ? null : location.key,
+      );
 
       return;
     }
 
-    setOpenWatchSidebarLocationKey((currentLocationKey) =>
-      currentLocationKey === location.key ? null : location.key,
-    );
+    toggleSidebar();
   };
 
-  const handleWatchSidebarClose = (): void => {
-    setOpenWatchSidebarLocationKey(null);
+  const handleDrawerClose = (): void => {
+    setOpenDrawerLocationKey(null);
   };
-
-  const mainPadding = isWatchPage
-    ? '12px 24px 40px'
-    : isShortsPage
-      ? '0'
-      : `12px ${theme.spacing.xxxl} ${theme.spacing.xxxl}`;
 
   return (
     <>
@@ -94,52 +101,40 @@ const App = () => {
         onMenuClick={handleMenuClick}
       />
 
-      {isWatchSidebarOpen && (
+      {isNavigationDrawerOpen && (
         <>
-          <WatchSidebarBackdrop
+          <NavigationBackdrop
             type="button"
             $appTheme={theme}
+            $isWatchPage={isWatchPage}
             aria-label="Close navigation menu"
-            onClick={handleWatchSidebarClose}
+            onClick={handleDrawerClose}
           />
 
-          <WatchSidebarDrawer
+          <NavigationDrawer
             $appTheme={theme}
-            aria-label="Watch page navigation"
+            $isWatchPage={isWatchPage}
+            aria-label="Navigation menu"
           >
             <Sidebar isExpanded activePath={location.pathname} />
-          </WatchSidebarDrawer>
+          </NavigationDrawer>
         </>
       )}
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          width: '100%',
-        }}
-      >
+      <AppLayout $appTheme={theme}>
         {!isWatchPage && (
-          <Sidebar isExpanded={isSidebarOpen} activePath={location.pathname} />
+          <DesktopSidebarSlot $appTheme={theme}>
+            <Sidebar
+              isExpanded={isSidebarOpen}
+              activePath={location.pathname}
+            />
+          </DesktopSidebarSlot>
         )}
 
-        <main
-          style={{
-            flex: 1,
-            minWidth: 0,
-
-            minHeight: `calc(
-              100vh - ${theme.header.height.desktop}
-            )`,
-
-            padding: mainPadding,
-
-            color: theme.colors.text.primary,
-
-            backgroundColor: theme.colors.background.page,
-
-            fontFamily: theme.font.family.primary,
-          }}
+        <MainContent
+          $appTheme={theme}
+          $isWatchPage={isWatchPage}
+          $isShortsPage={isShortsPage}
         >
           <Routes>
             <Route
@@ -167,8 +162,8 @@ const App = () => {
               element={<HistoryView onVideoSelect={handleVideoSelect} />}
             />
           </Routes>
-        </main>
-      </div>
+        </MainContent>
+      </AppLayout>
     </>
   );
 };

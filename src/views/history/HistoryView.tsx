@@ -1,11 +1,7 @@
 import { Button } from '../../components/elements';
-
 import { VideoGridShimmer } from '../../components/ui';
-
 import { useAuth } from '../../store/auth';
-
 import { useWatchHistory } from '../../store/history';
-
 import { ButtonHtmlType, ButtonSize, ButtonVariant } from '../../utils/enums';
 
 import HistoryVideoItem from './HistoryVideoItem';
@@ -13,6 +9,7 @@ import HistoryVideoItem from './HistoryVideoItem';
 import {
   HistoryGrid,
   HistoryHeader,
+  HistoryHeaderAction,
   HistoryPage,
   HistoryStatusMessage,
   HistoryStatusPanel,
@@ -103,31 +100,37 @@ const HistoryView = ({ onVideoSelect }: HistoryViewProps) => {
         </HistoryTitleGroup>
 
         {items.length > 0 && (
-          <Button
-            type={ButtonHtmlType.Button}
-            variant={ButtonVariant.Secondary}
-            size={ButtonSize.Medium}
-            disabled={isMutating}
-            onClick={handleClearHistory}
-          >
-            {isMutating ? 'Updating...' : 'Clear all history'}
-          </Button>
+          <HistoryHeaderAction>
+            <Button
+              type={ButtonHtmlType.Button}
+              variant={ButtonVariant.Secondary}
+              size={ButtonSize.Medium}
+              disabled={isMutating}
+              onClick={handleClearHistory}
+            >
+              {isMutating ? 'Updating...' : 'Clear all history'}
+            </Button>
+          </HistoryHeaderAction>
         )}
       </HistoryHeader>
 
       {isHistoryLoading && <VideoGridShimmer />}
 
       {!isHistoryLoading && error && (
-        <HistoryStatusMessage>{error}</HistoryStatusMessage>
+        <HistoryStatusPanel>
+          <HistoryStatusMessage role="alert">{error}</HistoryStatusMessage>
+        </HistoryStatusPanel>
       )}
 
       {!isHistoryLoading && !error && items.length === 0 && (
-        <HistoryStatusMessage>
-          Videos you watch will appear here.
-        </HistoryStatusMessage>
+        <HistoryStatusPanel>
+          <HistoryStatusMessage>
+            Videos you watch will appear here.
+          </HistoryStatusMessage>
+        </HistoryStatusPanel>
       )}
 
-      {!isHistoryLoading && items.length > 0 && (
+      {!isHistoryLoading && !error && items.length > 0 && (
         <HistoryGrid>
           {items.map((historyItem) => (
             <HistoryVideoItem

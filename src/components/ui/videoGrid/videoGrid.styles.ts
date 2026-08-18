@@ -12,6 +12,7 @@ export const GridContainer = styled.section`
 
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 `;
 

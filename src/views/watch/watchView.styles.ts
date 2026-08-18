@@ -19,29 +19,57 @@ export const WatchPage = styled.section`
 
 export const WatchLayout = styled.div`
   display: grid;
+
   grid-template-columns:
     minmax(0, 1fr)
     minmax(320px, 402px);
+
+  grid-template-areas:
+    'primary recommendations'
+    'primary recommendations';
+
   align-items: start;
-  gap: 24px;
+  column-gap: 24px;
 
   width: 100%;
 
   @media (max-width: 1100px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+
+    grid-template-areas:
+      'primary'
+      'recommendations'
+      'comments';
   }
 `;
-
 export const PrimaryColumn = styled.div`
+  grid-area: primary;
+
   min-width: 0;
 `;
 
 export const RecommendationsColumn = styled.div`
+  grid-area: recommendations;
+
+  min-width: 0;
+
+  @media (max-width: 1100px) {
+    margin-top: 28px;
+  }
+`;
+
+export const CommentsColumn = styled.div`
+  grid-area: comments;
+
   min-width: 0;
 `;
 
 export const WatchInformation = styled.div`
   padding: 14px 4px 0;
+
+  @media (max-width: 600px) {
+    padding: 12px 0 0;
+  }
 `;
 
 export const VideoTitle = styled.h1`
@@ -52,6 +80,12 @@ export const VideoTitle = styled.h1`
   font-size: 20px;
   font-weight: 600;
   line-height: 1.35;
+
+  overflow-wrap: anywhere;
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+  }
 `;
 
 export const VideoActionsRow = styled.div`
@@ -63,7 +97,7 @@ export const VideoActionsRow = styled.div`
   margin-top: 14px;
 
   @media (max-width: 760px) {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
     gap: 14px;
   }
@@ -73,12 +107,22 @@ export const ChannelActions = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
+
+  min-width: 0;
+
+  @media (max-width: 480px) {
+    justify-content: space-between;
+
+    width: 100%;
+  }
 `;
 
 export const ChannelInformation = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+
+  min-width: 0;
 `;
 
 export const ChannelAvatar = styled.div`
@@ -111,12 +155,18 @@ export const ChannelInitial = styled.span`
 `;
 
 export const ChannelTitle = styled.p`
+  min-width: 0;
   margin: 0;
+
+  overflow: hidden;
 
   color: inherit;
 
   font-size: 14px;
   font-weight: 600;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const SubscribeButton = styled.button<ThemeProps>`
@@ -144,9 +194,26 @@ export const ActionButtons = styled.div`
   gap: 8px;
 
   flex-wrap: wrap;
+
+  @media (max-width: 760px) {
+    flex-wrap: nowrap;
+
+    width: 100%;
+    padding-bottom: 2px;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 `;
 
 export const ActionButton = styled.button<ThemeProps>`
+  flex-shrink: 0;
+
   min-height: 36px;
 
   padding: 0 16px;
@@ -159,6 +226,7 @@ export const ActionButton = styled.button<ThemeProps>`
   background-color: ${({ $appTheme }) => $appTheme.colors.background.secondary};
 
   font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
+
   font-size: 14px;
   font-weight: 600;
 

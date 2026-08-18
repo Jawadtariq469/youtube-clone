@@ -22,7 +22,7 @@ const ShortVideoSkeleton = () => {
       <ShortStage>
         <ShortPlayerContainer $appTheme={theme}>
           <ShortPlayerSkeleton>
-            <Skeleton width="100%" height="100%" borderRadius="14px" />
+            <Skeleton width="100%" height="100%" borderRadius="0" />{' '}
           </ShortPlayerSkeleton>
         </ShortPlayerContainer>
 

@@ -20,8 +20,12 @@ export const ShortSlide = styled.section`
   scroll-snap-align: start;
   scroll-snap-stop: always;
 
+  box-sizing: border-box;
+
   @media (max-width: 760px) {
     padding: 0;
+
+    background-color: #000000;
   }
 `;
 
@@ -32,9 +36,10 @@ export const ShortStage = styled.div`
   align-items: flex-end;
   gap: 14px;
 
-  height: min(760px, calc(100% - 24px));
-
+  width: fit-content;
   max-width: 100%;
+
+  height: min(760px, calc(100% - 24px));
 
   @media (max-width: 760px) {
     display: block;
@@ -47,11 +52,12 @@ export const ShortStage = styled.div`
 export const ShortPlayerContainer = styled.div<ShortPlayerContainerProps>`
   position: relative;
 
+  flex-shrink: 0;
+
   height: 100%;
   aspect-ratio: 9 / 16;
 
   overflow: hidden;
-  flex-shrink: 0;
 
   border-radius: 14px;
 
@@ -62,6 +68,7 @@ export const ShortPlayerContainer = styled.div<ShortPlayerContainerProps>`
   @media (max-width: 760px) {
     width: 100%;
     height: 100%;
+
     aspect-ratio: auto;
 
     border-radius: 0;
@@ -114,6 +121,11 @@ export const ShortPlayIndicator = styled.span`
   background-color: rgb(0 0 0 / 55%);
 
   transform: translate(-50%, -50%);
+
+  @media (max-width: 480px) {
+    width: 50px;
+    height: 50px;
+  }
 `;
 
 export const ShortMetadataOverlay = styled.div`
@@ -130,10 +142,6 @@ export const ShortMetadataOverlay = styled.div`
 
   min-height: 230px;
 
-  /*
-   * Extra bottom padding keeps the text above
-   * the embedded YouTube controls.
-   */
   padding: 110px 18px 58px;
 
   color: #ffffff;
@@ -147,12 +155,37 @@ export const ShortMetadataOverlay = styled.div`
   );
 
   pointer-events: none;
+
+  box-sizing: border-box;
+
+  @media (max-width: 760px) {
+    /*
+     * Right padding reserves space for
+     * the mobile action buttons.
+     */
+    padding: 110px 78px calc(58px + env(safe-area-inset-bottom)) 16px;
+  }
+
+  @media (max-width: 400px) {
+    min-height: 215px;
+
+    padding-top: 95px;
+    padding-right: 70px;
+  }
+
+  @media (max-width: 760px) and (max-height: 700px) {
+    min-height: 200px;
+
+    padding-top: 85px;
+  }
 `;
 
 export const ShortChannelRow = styled.div`
   display: flex;
   align-items: center;
   gap: 9px;
+
+  min-width: 0;
 
   margin-bottom: 9px;
 `;
@@ -181,6 +214,8 @@ export const ShortChannelAvatar = styled.div`
 `;
 
 export const ShortChannelAvatarImage = styled.img`
+  display: block;
+
   width: 100%;
   height: 100%;
 
@@ -188,6 +223,7 @@ export const ShortChannelAvatarImage = styled.img`
 `;
 
 export const ShortChannelTitle = styled.p`
+  min-width: 0;
   margin: 0;
 
   overflow: hidden;
@@ -211,6 +247,8 @@ export const ShortVideoTitle = styled.h2`
   font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
+
+  overflow-wrap: anywhere;
 
   text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
 

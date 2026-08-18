@@ -12,12 +12,13 @@ export const ShimmerResultItem = styled.div`
   align-items: start;
   gap: 16px;
 
-  box-sizing: border-box;
-
   width: 100%;
   max-width: 1200px;
+  min-width: 0;
 
   padding: 8px;
+
+  box-sizing: border-box;
 
   @media (max-width: 900px) {
     grid-template-columns:
@@ -26,7 +27,11 @@ export const ShimmerResultItem = styled.div`
   }
 
   @media (max-width: 700px) {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+
+    padding: 0 0 4px;
   }
 `;
 
@@ -40,7 +45,7 @@ export const ShimmerResultInformation = styled.div`
   padding-top: 4px;
 
   @media (max-width: 700px) {
-    padding: 12px 4px 4px;
+    padding: 10px 4px 0;
   }
 `;
 

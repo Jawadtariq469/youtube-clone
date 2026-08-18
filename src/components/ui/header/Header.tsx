@@ -29,6 +29,7 @@ import {
   HeaderContainer,
   HeaderLeft,
   HeaderRight,
+  NotificationAction,
   VoiceSearchAction,
 } from './header.styles';
 import ProfileMenu from '../profileMenu/ProfileMenu';
@@ -92,7 +93,7 @@ const Header = ({
         />
 
         <BrandLink
-          href={AppRoutes.Home}
+          to={AppRoutes.Home}
           aria-label={AppText.Header.YouTubeHome}
           $appTheme={theme}
         >
@@ -139,14 +140,14 @@ const Header = ({
             {AppText.Header.Create}
           </Button>
         </CreateAction>
-
-        <IconButton
-          icon={<NotificationIcon />}
-          label={AppText.Header.Notifications}
-          size={IconButtonSize.Medium}
-          onClick={onNotificationsClick}
-        />
-
+        <NotificationAction $appTheme={theme}>
+          <IconButton
+            icon={<NotificationIcon />}
+            label={AppText.Header.Notifications}
+            size={IconButtonSize.Medium}
+            onClick={onNotificationsClick}
+          />
+        </NotificationAction>
         <ProfileMenu />
       </HeaderRight>
     </HeaderContainer>

@@ -16,6 +16,7 @@ export const SearchResultButton = styled.button<SearchResultButtonProps>`
 
   width: 100%;
   max-width: 1200px;
+  min-width: 0;
 
   padding: 8px;
 
@@ -27,23 +28,33 @@ export const SearchResultButton = styled.button<SearchResultButtonProps>`
   background-color: transparent;
 
   font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
+
   text-align: left;
 
   cursor: pointer;
+  touch-action: manipulation;
+
+  box-sizing: border-box;
 
   transition:
     background-color 180ms ease,
     transform 180ms ease;
 
-  &:hover {
-    background-color: ${({ $appTheme }) =>
-      `color-mix(
-          in srgb,
-          ${$appTheme.colors.text.primary} 8%,
-          ${$appTheme.colors.background.page}
-        )`};
+  /*
+     * Apply hover movement only on devices
+     * that actually support mouse hovering.
+     */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: ${({ $appTheme }) =>
+        `color-mix(
+            in srgb,
+            ${$appTheme.colors.text.primary} 8%,
+            ${$appTheme.colors.background.page}
+          )`};
 
-    transform: translateY(-2px);
+      transform: translateY(-2px);
+    }
   }
 
   &:focus-visible {
@@ -59,7 +70,11 @@ export const SearchResultButton = styled.button<SearchResultButtonProps>`
   }
 
   @media (max-width: 700px) {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+
+    padding: 0 0 4px;
   }
 `;
 
@@ -67,6 +82,8 @@ export const ThumbnailContainer = styled.div`
   position: relative;
 
   width: 100%;
+  min-width: 0;
+
   aspect-ratio: 16 / 9;
 
   overflow: hidden;
@@ -74,6 +91,10 @@ export const ThumbnailContainer = styled.div`
   border-radius: 12px;
 
   background-color: rgb(128 128 128 / 20%);
+
+  @media (max-width: 480px) {
+    border-radius: 10px;
+  }
 `;
 
 export const Thumbnail = styled.img`
@@ -108,7 +129,7 @@ export const ResultInformation = styled.div`
   padding-top: 4px;
 
   @media (max-width: 700px) {
-    padding: 12px 4px 4px;
+    padding: 10px 4px 0;
   }
 `;
 
@@ -125,11 +146,17 @@ export const VideoTitle = styled.h3`
   font-weight: 600;
   line-height: 1.35;
 
+  overflow-wrap: anywhere;
+
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 
   @media (max-width: 700px) {
     font-size: 16px;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 15px;
   }
 `;
 
@@ -154,7 +181,13 @@ export const ChannelInformation = styled.div`
   align-items: center;
   gap: 10px;
 
+  min-width: 0;
+
   margin-top: 18px;
+
+  @media (max-width: 700px) {
+    margin-top: 12px;
+  }
 `;
 
 export const ChannelAvatar = styled.div`
@@ -174,6 +207,8 @@ export const ChannelAvatar = styled.div`
 `;
 
 export const ChannelAvatarImage = styled.img`
+  display: block;
+
   width: 100%;
   height: 100%;
 
@@ -187,6 +222,8 @@ export const ChannelInitial = styled.span`
 `;
 
 export const ChannelTitle = styled.p`
+  min-width: 0;
+
   margin: 0;
 
   overflow: hidden;
@@ -214,6 +251,8 @@ export const Description = styled.p`
   line-height: 1.45;
 
   opacity: 0.75;
+
+  overflow-wrap: anywhere;
 
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;

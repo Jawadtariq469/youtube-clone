@@ -1,13 +1,17 @@
 import { useSearchParams } from 'react-router';
-import { useRecordWatchHistory } from '../../store/history';
+
 import { VideoPlayer } from '../../components/ui';
 import { AppConstants, AppQueryParameters } from '../../constants';
+import { useMediaQuery } from '../../hooks/useMediaQuerry';
 import { useVideoDetails } from '../../hooks/useVideoDetails';
+import { useRecordWatchHistory } from '../../store/history';
 
+import WatchComments from './WatchComments';
 import WatchInformation from './WatchInformation';
 import WatchRecommendations from './WatchRecommendations';
-import WatchComments from './WatchComments';
+
 import {
+  CommentsColumn,
   PrimaryColumn,
   RecommendationsColumn,
   StatusMessage,
@@ -19,8 +23,12 @@ import type { WatchViewProps } from './types';
 
 const VIDEO_ID_PATTERN = /^[a-zA-Z0-9_-]{11}$/;
 
+const STACKED_LAYOUT_QUERY = '(max-width: 1100px)';
+
 const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
   const [searchParameters] = useSearchParams();
+
+  const isStackedLayout = useMediaQuery(STACKED_LAYOUT_QUERY);
 
   const videoId =
     searchParameters.get(AppQueryParameters.VideoId)?.trim() ??
@@ -34,7 +42,9 @@ const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
     isError,
     error,
   } = useVideoDetails(isValidVideoId ? videoId : AppConstants.EmptyString);
+
   useRecordWatchHistory(video);
+
   if (!videoId) {
     return <StatusMessage>No video was selected.</StatusMessage>;
   }
@@ -42,6 +52,8 @@ const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
   if (!isValidVideoId) {
     return <StatusMessage>The video ID is invalid.</StatusMessage>;
   }
+
+  const shouldDisplayComments = !isPending && !isError && Boolean(video);
 
   return (
     <WatchPage>
@@ -60,7 +72,12 @@ const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
             error={error}
           />
 
-          {!isPending && !isError && video && (
+          {/*
+           * Desktop:
+           * comments stay underneath the video
+           * in the left column.
+           */}
+          {!isStackedLayout && shouldDisplayComments && video && (
             <WatchComments key={video.id} videoId={video.id} />
           )}
         </PrimaryColumn>
@@ -73,6 +90,17 @@ const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
             onVideoSelect={onVideoSelect}
           />
         </RecommendationsColumn>
+
+        {/*
+         * Tablet/mobile:
+         * recommendations render first,
+         * followed by comments.
+         */}
+        {isStackedLayout && shouldDisplayComments && video && (
+          <CommentsColumn>
+            <WatchComments key={video.id} videoId={video.id} />
+          </CommentsColumn>
+        )}
       </WatchLayout>
     </WatchPage>
   );
