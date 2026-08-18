@@ -25,7 +25,11 @@ const VIDEO_ID_PATTERN = /^[a-zA-Z0-9_-]{11}$/;
 
 const STACKED_LAYOUT_QUERY = '(max-width: 1100px)';
 
-const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
+const WatchView = ({
+  autoPlay = true,
+  onVideoSelect,
+  onChannelSelect,
+}: WatchViewProps) => {
   const [searchParameters] = useSearchParams();
 
   const isStackedLayout = useMediaQuery(STACKED_LAYOUT_QUERY);
@@ -70,6 +74,7 @@ const WatchView = ({ autoPlay = true, onVideoSelect }: WatchViewProps) => {
             isLoading={isPending}
             isError={isError}
             error={error}
+            onChannelSelect={onChannelSelect}
           />
 
           {/*

@@ -117,12 +117,38 @@ export const ChannelActions = styled.div`
   }
 `;
 
-export const ChannelInformation = styled.div`
+export const ChannelInformation = styled.button<ThemeProps>`
   display: flex;
   align-items: center;
   gap: 10px;
 
   min-width: 0;
+
+  padding: 0;
+
+  border: none;
+
+  color: ${({ $appTheme }) => $appTheme.colors.text.primary};
+
+  background-color: transparent;
+
+  font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
+
+  text-align: left;
+
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ $appTheme }) => $appTheme.colors.text.primary};
+
+    outline-offset: 3px;
+
+    border-radius: 6px;
+  }
 `;
 
 export const ChannelAvatar = styled.div`
@@ -169,7 +195,7 @@ export const ChannelTitle = styled.p`
   white-space: nowrap;
 `;
 
-export const SubscribeButton = styled.button<ThemeProps>`
+export const SubscribeButton = styled.button<SubscribeButtonProps>`
   min-height: 36px;
 
   padding: 0 18px;
@@ -177,15 +203,38 @@ export const SubscribeButton = styled.button<ThemeProps>`
   border: none;
   border-radius: 18px;
 
-  color: ${({ $appTheme }) => $appTheme.colors.background.page};
+  color: ${({ $appTheme, $isSubscribed }) =>
+      $isSubscribed
+        ? $appTheme.colors.text.primary
+        : $appTheme.colors.background.page};
 
-  background-color: ${({ $appTheme }) => $appTheme.colors.text.primary};
+  background-color: ${({ $appTheme, $isSubscribed }) =>
+      $isSubscribed
+        ? $appTheme.colors.background.secondary
+        : $appTheme.colors.text.primary};
 
   font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
+
   font-size: 14px;
   font-weight: 600;
 
   cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: ${({ $appTheme }) => $appTheme.colors.background.active};
+  }
+
+  &:disabled {
+    cursor: wait;
+
+    opacity: 0.65;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ $appTheme }) => $appTheme.colors.text.primary};
+
+    outline-offset: 2px;
+  }
 `;
 
 export const ActionButtons = styled.div`
@@ -313,3 +362,6 @@ export const LoadingChannel = styled.div`
 
   margin-top: 6px;
 `;
+interface SubscribeButtonProps extends ThemeProps {
+  $isSubscribed: boolean;
+}

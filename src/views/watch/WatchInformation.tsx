@@ -1,5 +1,9 @@
 import { Skeleton } from '../../components/elements';
+
+import { useAuth } from '../../store/auth';
 import { useTheme } from '../../store/global';
+import { useSubscriptions } from '../../store/subscriptions';
+
 import {
   formatPublishedDate,
   formatViewCount,
@@ -34,8 +38,43 @@ const WatchInformation = ({
   isLoading,
   isError,
   error,
+  onChannelSelect,
 }: WatchInformationProps) => {
   const { theme } = useTheme();
+  const handleChannelSelect = (): void => {
+    if (!video) {
+      return;
+    }
+
+    onChannelSelect(video.channelId);
+  };
+  const { user, signInWithGoogle } = useAuth();
+
+  const {
+    isLoading: isSubscriptionsLoading,
+    isMutating: isSubscriptionMutating,
+    isSubscribed,
+    toggleSubscription,
+  } = useSubscriptions();
+
+  const channelIsSubscribed = video ? isSubscribed(video.channelId) : false;
+
+  const isSubscriptionButtonDisabled =
+    Boolean(user) && (isSubscriptionsLoading || isSubscriptionMutating);
+
+  const handleSubscriptionToggle = (): void => {
+    if (!video) {
+      return;
+    }
+
+    if (!user) {
+      void signInWithGoogle();
+
+      return;
+    }
+
+    void toggleSubscription(video);
+  };
 
   if (isLoading) {
     return (
@@ -69,13 +108,27 @@ const WatchInformation = ({
     return <StatusMessage>This video could not be found.</StatusMessage>;
   }
 
+  const subscriptionButtonText =
+    isSubscriptionsLoading && user
+      ? 'Loading...'
+      : isSubscriptionMutating
+        ? 'Updating...'
+        : channelIsSubscribed
+          ? 'Subscribed'
+          : 'Subscribe';
+
   return (
     <WatchInformationContainer>
       <VideoTitle>{video.title}</VideoTitle>
 
       <VideoActionsRow>
         <ChannelActions>
-          <ChannelInformation>
+          <ChannelInformation
+            type="button"
+            $appTheme={theme}
+            aria-label={`Open ${video.channelTitle} channel`}
+            onClick={handleChannelSelect}
+          >
             <ChannelAvatar>
               {video.channelAvatarUrl ? (
                 <ChannelAvatarImage src={video.channelAvatarUrl} alt="" />
@@ -89,8 +142,20 @@ const WatchInformation = ({
             <ChannelTitle>{video.channelTitle}</ChannelTitle>
           </ChannelInformation>
 
-          <SubscribeButton type="button" $appTheme={theme}>
-            Subscribe
+          <SubscribeButton
+            type="button"
+            $appTheme={theme}
+            $isSubscribed={channelIsSubscribed}
+            disabled={isSubscriptionButtonDisabled}
+            aria-pressed={channelIsSubscribed}
+            aria-label={
+              channelIsSubscribed
+                ? `Unsubscribe from ${video.channelTitle}`
+                : `Subscribe to ${video.channelTitle}`
+            }
+            onClick={handleSubscriptionToggle}
+          >
+            {subscriptionButtonText}
           </SubscribeButton>
         </ChannelActions>
 

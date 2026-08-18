@@ -4,3 +4,5 @@ export * from './video';
 export * from './recommendation';
 export * from './comment';
 export * from './watchHistory';
+export * from './subscription';
+export * from './channel';

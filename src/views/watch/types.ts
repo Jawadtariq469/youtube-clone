@@ -4,6 +4,7 @@ export interface WatchViewProps {
   autoPlay?: boolean;
 
   onVideoSelect: (videoId: string) => void;
+  onChannelSelect: (channelId: string) => void;
 }
 
 export interface ExpandableDescriptionProps {
@@ -17,6 +18,8 @@ export interface WatchInformationProps {
   isError: boolean;
 
   error: unknown;
+
+  onChannelSelect: (channelId: string) => void;
 }
 
 export interface WatchRecommendationsProps {

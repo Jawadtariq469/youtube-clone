@@ -21,6 +21,7 @@ import type { Video, WatchHistoryItem } from '../../utils/types';
 interface FirestoreHistoryDocument {
   title: string;
   thumbnailUrl: string;
+  channelId: string;
   channelTitle: string;
 
   channelAvatarUrl?: string;
@@ -54,6 +55,8 @@ const mapHistoryDocument = (
 
     title: data.title,
     thumbnailUrl: data.thumbnailUrl,
+    channelId: data.channelId ?? '',
+
     channelTitle: data.channelTitle,
 
     viewCount: data.viewCount,
@@ -117,6 +120,7 @@ export const saveVideoToWatchHistory = async (
     title: video.title,
 
     thumbnailUrl: video.thumbnailUrl,
+    channelId: video.channelId,
 
     channelTitle: video.channelTitle,
 

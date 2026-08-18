@@ -14,7 +14,9 @@ export { default as Comments } from './comment/Comment';
 export { default as ProfileMenu } from './profileMenu/ProfileMenu';
 export { default as ShortVideo } from './shortVideos/ShortVideo';
 export { default as ShortVideoSkeleton } from './shortVideos/ShortVideoSkeleton';
+export { default as ChannelHeader } from './channelHeader/ChannelHeader';
 
+export type { ChannelHeaderProps } from './channelHeader/types';
 export type { ShortVideoProps } from './shortVideos/types';
 export type { CommentsProps } from './comment/types';
 export type { RelatedVideosProps } from './relatedVideos/types';

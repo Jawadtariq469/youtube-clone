@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
 
 import { Header, Sidebar } from './components/ui';
-import { AppQueryParameters, AppRoutes } from './constants';
 import { useScrollToTop } from './hooks/useScrollToTop';
 import { useAuthObserver } from './store/auth';
 import { useSidebar, useTheme } from './store/global';
@@ -13,7 +12,7 @@ import HomeView from './views/home/HomeView';
 import SearchResultsView from './views/searchResult/SearchResultsView';
 import ShortsView from './views/shorts/ShortView';
 import WatchView from './views/watch/WatchView';
-
+import SubscriptionsView from './views/subscriptions/SubscriptionsView';
 import {
   AppLayout,
   DesktopSidebarSlot,
@@ -21,10 +20,14 @@ import {
   NavigationBackdrop,
   NavigationDrawer,
 } from './App.styles';
+import { useSubscriptionsObserver } from './store/subscriptions';
+import ChannelView from './views/channel/ChannelView';
 
+import { AppQueryParameters, AppRoutes, getChannelPath } from './constants';
 const App = () => {
   useAuthObserver();
   useHistoryObserver();
+  useSubscriptionsObserver();
   useScrollToTop();
 
   const navigate = useNavigate();
@@ -72,7 +75,9 @@ const App = () => {
 
     navigate(`${AppRoutes.Watch}?${searchParameters.toString()}`);
   };
-
+  const handleChannelSelect = (channelId: string): void => {
+    navigate(getChannelPath(channelId));
+  };
   const handleMenuClick = (): void => {
     const isMobileViewport = window.matchMedia(
       `(max-width: ${theme.breakpoint.md}px)`,
@@ -146,7 +151,10 @@ const App = () => {
               path={AppRoutes.Shorts}
               element={<ShortsView onVideoSelect={handleVideoSelect} />}
             />
-
+            <Route
+              path={AppRoutes.Subscriptions}
+              element={<SubscriptionsView onVideoSelect={handleVideoSelect} />}
+            />
             <Route
               path={AppRoutes.Results}
               element={<SearchResultsView onVideoSelect={handleVideoSelect} />}
@@ -154,9 +162,17 @@ const App = () => {
 
             <Route
               path={AppRoutes.Watch}
-              element={<WatchView onVideoSelect={handleVideoSelect} />}
+              element={
+                <WatchView
+                  onVideoSelect={handleVideoSelect}
+                  onChannelSelect={handleChannelSelect}
+                />
+              }
             />
-
+            <Route
+              path={AppRoutes.Channel}
+              element={<ChannelView onVideoSelect={handleVideoSelect} />}
+            />
             <Route
               path={AppRoutes.History}
               element={<HistoryView onVideoSelect={handleVideoSelect} />}

@@ -17,7 +17,10 @@ export type YouTubeVideoItem = {
 
   snippet: {
     title: string;
+
+    channelId: string;
     channelTitle: string;
+
     description: string;
     publishedAt: string;
     categoryId: string;
@@ -125,4 +128,48 @@ export type YouTubeCommentsResponse = {
   };
 
   items: YouTubeCommentItem[];
+};
+export type YouTubeChannelsResponse = {
+  items: Array<{
+    id: string;
+
+    snippet: {
+      title: string;
+      description: string;
+      publishedAt: string;
+
+      customUrl?: string;
+
+      thumbnails: YouTubeThumbnails;
+    };
+
+    contentDetails: {
+      relatedPlaylists: {
+        uploads?: string;
+      };
+    };
+
+    statistics: {
+      subscriberCount?: string;
+      hiddenSubscriberCount?: boolean;
+
+      videoCount?: string;
+      viewCount?: string;
+    };
+
+    brandingSettings?: {
+      image?: {
+        bannerExternalUrl?: string;
+        bannerImageUrl?: string;
+      };
+    };
+  }>;
+};
+
+export type YouTubePlaylistItemsResponse = {
+  items: Array<{
+    contentDetails: {
+      videoId?: string;
+    };
+  }>;
 };

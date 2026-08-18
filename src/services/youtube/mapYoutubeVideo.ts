@@ -19,6 +19,7 @@ export const mapYoutubeVideo = (item: YouTubeVideoItem): Video => {
 
     thumbnailUrl: thumbnail.url,
 
+    channelId: item.snippet.channelId,
     channelTitle: item.snippet.channelTitle,
 
     viewCount: Number(item.statistics.viewCount ?? 0),

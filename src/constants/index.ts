@@ -1,4 +1,4 @@
 export { AppConstants } from './app';
-export { AppQueryParameters, AppRoutes } from './routes';
+export { AppQueryParameters, AppRoutes, getChannelPath } from './routes';
 export { AppText } from './text';
 export { GlobalActionType } from './action';
