@@ -66,7 +66,7 @@ const SearchResultsView = ({ onVideoSelect }: SearchResultsViewProps) => {
   if (isError && videos.length === 0) {
     return (
       <StatusMessage>
-        Failed to load search results:{' '}
+        No results found for “{searchQuery}”.
         {error instanceof Error ? error.message : 'Unknown error'}
       </StatusMessage>
     );

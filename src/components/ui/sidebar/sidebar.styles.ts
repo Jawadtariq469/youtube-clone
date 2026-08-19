@@ -24,6 +24,7 @@ export const SidebarContainer = styled.aside<StyledSidebarProps>`
 
   overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
 
   border-right: ${({ $appTheme }) => $appTheme.border.width.thin} solid
     ${({ $appTheme }) => $appTheme.colors.border.subtle};

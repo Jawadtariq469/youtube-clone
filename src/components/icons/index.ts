@@ -8,6 +8,7 @@ export { default as HistoryIcon } from './svg/HistoryIcon';
 export { default as HomeIcon } from './svg/HomeIcon';
 export { default as ShortsIcon } from './svg/ShortsIcon';
 export { default as SubscriptionsIcon } from './svg/SubscriptionsIcon';
+export { default as DownloadIcon } from './svg/DownloadIcon';
 export {
   CommentOutlineIcon,
   LikeOutlineIcon,

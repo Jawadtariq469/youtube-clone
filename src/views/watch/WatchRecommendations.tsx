@@ -31,11 +31,9 @@ const WatchRecommendations = ({
     filters,
     selectedFilterId,
     videos,
-
     hasMoreVideos,
     isLoadingMore,
     loadMoreRecommendations,
-
     isLoading,
     isError,
   } = useWatchRecommendations(video, requestedFilterId);

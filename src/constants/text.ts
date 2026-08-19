@@ -51,5 +51,6 @@ export const AppText = {
     Shorts: 'Shorts',
     Subscriptions: 'Subscriptions',
     History: 'History',
+    Downloads: 'Downloads',
   },
 } as const;

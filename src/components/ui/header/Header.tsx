@@ -55,8 +55,22 @@ const Header = ({
     SEARCH_SUGGESTION_DEBOUNCE_MS,
   );
 
-  const { data: searchSuggestions = [], isFetching: isSuggestionsLoading } =
-    useSearchSuggestions(debouncedSearchValue);
+  const normalizedSearchValue = searchValue.trim().toLowerCase();
+
+  const normalizedDebouncedSearchValue = debouncedSearchValue
+    .trim()
+    .toLowerCase();
+
+  const {
+    data: searchSuggestions = [],
+    isFetching: isSuggestionsFetching,
+    isError: hasSuggestionsError,
+  } = useSearchSuggestions(debouncedSearchValue);
+
+  const isSuggestionsLoading =
+    normalizedSearchValue.length > 0 &&
+    (normalizedSearchValue !== normalizedDebouncedSearchValue ||
+      isSuggestionsFetching);
 
   const { theme } = useTheme();
 
@@ -115,6 +129,7 @@ const Header = ({
           onSubmit={handleSearchSubmit}
           suggestions={searchSuggestions}
           isSuggestionsLoading={isSuggestionsLoading}
+          hasSuggestionsError={hasSuggestionsError}
           onSuggestionSelect={handleSuggestionSelect}
         />
 

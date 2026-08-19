@@ -1,6 +1,8 @@
 import { Skeleton } from '../../components/elements';
+import { DownloadIcon } from '../../components/icons';
 
 import { useAuth } from '../../store/auth';
+import { useDownloads } from '../../store/downloads';
 import { useTheme } from '../../store/global';
 import { useSubscriptions } from '../../store/subscriptions';
 
@@ -41,14 +43,10 @@ const WatchInformation = ({
   onChannelSelect,
 }: WatchInformationProps) => {
   const { theme } = useTheme();
-  const handleChannelSelect = (): void => {
-    if (!video) {
-      return;
-    }
 
-    onChannelSelect(video.channelId);
-  };
   const { user, signInWithGoogle } = useAuth();
+
+  const { downloadVideo, isDownloaded, removeDownload } = useDownloads();
 
   const {
     isLoading: isSubscriptionsLoading,
@@ -59,8 +57,18 @@ const WatchInformation = ({
 
   const channelIsSubscribed = video ? isSubscribed(video.channelId) : false;
 
+  const videoIsDownloaded = video ? isDownloaded(video.id) : false;
+
   const isSubscriptionButtonDisabled =
     Boolean(user) && (isSubscriptionsLoading || isSubscriptionMutating);
+
+  const handleChannelSelect = (): void => {
+    if (!video) {
+      return;
+    }
+
+    onChannelSelect(video.channelId);
+  };
 
   const handleSubscriptionToggle = (): void => {
     if (!video) {
@@ -74,6 +82,20 @@ const WatchInformation = ({
     }
 
     void toggleSubscription(video);
+  };
+
+  const handleDownloadToggle = (): void => {
+    if (!video) {
+      return;
+    }
+
+    if (videoIsDownloaded) {
+      removeDownload(video.id);
+
+      return;
+    }
+
+    downloadVideo(video);
   };
 
   if (isLoading) {
@@ -166,6 +188,23 @@ const WatchInformation = ({
 
           <ActionButton type="button" $appTheme={theme}>
             Share
+          </ActionButton>
+
+          <ActionButton
+            type="button"
+            $appTheme={theme}
+            $isActive={videoIsDownloaded}
+            aria-pressed={videoIsDownloaded}
+            aria-label={
+              videoIsDownloaded
+                ? 'Remove video from downloads'
+                : 'Download video'
+            }
+            onClick={handleDownloadToggle}
+          >
+            <DownloadIcon />
+
+            {videoIsDownloaded ? 'Downloaded' : 'Download'}
           </ActionButton>
 
           <ActionButton

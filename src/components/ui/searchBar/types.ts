@@ -16,7 +16,7 @@ export interface SearchBarProps {
   suggestions?: readonly string[];
 
   isSuggestionsLoading?: boolean;
-
+  hasSuggestionsError?: boolean;
   onSuggestionSelect?: (suggestion: string) => void;
 
   isDisabled?: boolean;

@@ -1,5 +1,6 @@
 import { SidebarItem } from '../../elements';
 import {
+  DownloadIcon,
   HistoryIcon,
   HomeIcon,
   MoonIcon,
@@ -43,6 +44,11 @@ const sidebarItems: SidebarNavigationItem[] = [
     href: AppRoutes.History,
     label: AppText.Sidebar.History,
     icon: <HistoryIcon />,
+  },
+  {
+    href: AppRoutes.Downloads,
+    label: AppText.Sidebar.Downloads,
+    icon: <DownloadIcon />,
   },
 ];
 

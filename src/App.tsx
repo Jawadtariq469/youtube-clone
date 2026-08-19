@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
 
 import { Header, Sidebar } from './components/ui';
@@ -22,6 +22,7 @@ import {
 } from './App.styles';
 import { useSubscriptionsObserver } from './store/subscriptions';
 import ChannelView from './views/channel/ChannelView';
+import DownloadsView from './views/downloads/DownloadsView';
 
 import { AppQueryParameters, AppRoutes, getChannelPath } from './constants';
 const App = () => {
@@ -46,7 +47,24 @@ const App = () => {
   const isShortsPage = location.pathname === AppRoutes.Shorts;
 
   const isNavigationDrawerOpen = openDrawerLocationKey === location.key;
+  const shouldLockPageScroll = isWatchPage && isNavigationDrawerOpen;
 
+  useEffect(() => {
+    if (!shouldLockPageScroll) {
+      return;
+    }
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [shouldLockPageScroll]);
   const currentSearchValue =
     location.pathname === AppRoutes.Results
       ? (new URLSearchParams(location.search).get(
@@ -176,6 +194,11 @@ const App = () => {
             <Route
               path={AppRoutes.History}
               element={<HistoryView onVideoSelect={handleVideoSelect} />}
+            />
+
+            <Route
+              path={AppRoutes.Downloads}
+              element={<DownloadsView onVideoSelect={handleVideoSelect} />}
             />
           </Routes>
         </MainContent>

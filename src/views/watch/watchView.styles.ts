@@ -10,6 +10,10 @@ interface DescriptionTextProps {
   $isExpanded: boolean;
 }
 
+interface ActionButtonProps extends ThemeProps {
+  $isActive?: boolean;
+}
+
 export const WatchPage = styled.section`
   width: 100%;
   max-width: 1800px;
@@ -92,13 +96,15 @@ export const VideoActionsRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 14px 20px;
 
   margin-top: 14px;
 
   @media (max-width: 760px) {
     align-items: stretch;
     flex-direction: column;
+    flex-wrap: nowrap;
     gap: 14px;
   }
 `;
@@ -108,12 +114,18 @@ export const ChannelActions = styled.div`
   align-items: center;
   gap: 12px;
 
-  min-width: 0;
+  flex: 1 1 auto;
+  min-width: 260px;
+
+  @media (max-width: 760px) {
+    flex: none;
+
+    width: 100%;
+    min-width: 0;
+  }
 
   @media (max-width: 480px) {
     justify-content: space-between;
-
-    width: 100%;
   }
 `;
 
@@ -204,14 +216,14 @@ export const SubscribeButton = styled.button<SubscribeButtonProps>`
   border-radius: 18px;
 
   color: ${({ $appTheme, $isSubscribed }) =>
-      $isSubscribed
-        ? $appTheme.colors.text.primary
-        : $appTheme.colors.background.page};
+    $isSubscribed
+      ? $appTheme.colors.text.primary
+      : $appTheme.colors.background.page};
 
   background-color: ${({ $appTheme, $isSubscribed }) =>
-      $isSubscribed
-        ? $appTheme.colors.background.secondary
-        : $appTheme.colors.text.primary};
+    $isSubscribed
+      ? $appTheme.colors.background.secondary
+      : $appTheme.colors.text.primary};
 
   font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
 
@@ -240,27 +252,30 @@ export const SubscribeButton = styled.button<SubscribeButtonProps>`
 export const ActionButtons = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
 
+  flex: 0 0 auto;
   flex-wrap: wrap;
 
+  max-width: 100%;
+
   @media (max-width: 760px) {
-    flex-wrap: nowrap;
+    justify-content: flex-start;
 
     width: 100%;
-    padding-bottom: 2px;
+    max-width: none;
 
-    overflow-x: auto;
-
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    overflow: visible;
   }
 `;
 
-export const ActionButton = styled.button<ThemeProps>`
+export const ActionButton = styled.button<ActionButtonProps>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
   flex-shrink: 0;
 
   min-height: 36px;
@@ -270,9 +285,13 @@ export const ActionButton = styled.button<ThemeProps>`
   border: none;
   border-radius: 18px;
 
-  color: ${({ $appTheme }) => $appTheme.colors.text.primary};
+  color: ${({ $appTheme, $isActive }) =>
+    $isActive ? $appTheme.colors.state.success : $appTheme.colors.text.primary};
 
-  background-color: ${({ $appTheme }) => $appTheme.colors.background.secondary};
+  background-color: ${({ $appTheme, $isActive }) =>
+    $isActive
+      ? $appTheme.colors.state.successBackground
+      : $appTheme.colors.background.secondary};
 
   font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
 
@@ -283,6 +302,19 @@ export const ActionButton = styled.button<ThemeProps>`
 
   &:hover {
     background-color: ${({ $appTheme }) => $appTheme.colors.background.active};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ $appTheme }) => $appTheme.colors.border.focus};
+
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
   }
 `;
 

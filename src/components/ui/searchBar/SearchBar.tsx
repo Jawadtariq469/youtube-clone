@@ -17,8 +17,9 @@ import {
   SuggestionButton,
   SuggestionIconContainer,
   SuggestionItem,
+  SuggestionsEmpty,
   SuggestionsList,
-  SuggestionsLoading,
+  SuggestionText,
 } from './searchBar.styles';
 
 import type { ChangeEvent, FocusEvent, FormEvent, KeyboardEvent } from 'react';
@@ -35,6 +36,7 @@ const SearchBar = ({
   onSubmit,
   suggestions = EMPTY_SUGGESTIONS,
   isSuggestionsLoading = false,
+  hasSuggestionsError = false,
   onSuggestionSelect,
   isDisabled = false,
 }: SearchBarProps) => {
@@ -132,10 +134,15 @@ const SearchBar = ({
     }
   };
 
+  const hasSuggestions = !hasSuggestionsError && suggestions.length > 0;
+
+  const shouldShowEmptySuggestions =
+    !isSuggestionsLoading && !hasSuggestionsError && !hasSuggestions;
+
   const shouldShowSuggestions =
     isSuggestionsOpen &&
     value.trim().length > 0 &&
-    (isSuggestionsLoading || suggestions.length > 0);
+    (hasSuggestions || shouldShowEmptySuggestions);
 
   return (
     <SearchForm
@@ -159,11 +166,19 @@ const SearchBar = ({
         />
 
         {shouldShowSuggestions && (
-          <SuggestionsList $appTheme={theme} role="listbox">
-            {isSuggestionsLoading && suggestions.length === 0 && (
-              <SuggestionsLoading $appTheme={theme}>
-                Loading suggestions...
-              </SuggestionsLoading>
+          <SuggestionsList
+            $appTheme={theme}
+            role="listbox"
+            aria-busy={isSuggestionsLoading}
+          >
+            {shouldShowEmptySuggestions && (
+              <SuggestionsEmpty
+                $appTheme={theme}
+                role="option"
+                aria-disabled="true"
+              >
+                No suggestions found for “{value.trim()}”.
+              </SuggestionsEmpty>
             )}
 
             {suggestions.map((suggestion, index) => (
@@ -181,7 +196,7 @@ const SearchBar = ({
                     <SearchIcon />
                   </SuggestionIconContainer>
 
-                  {suggestion}
+                  <SuggestionText>{suggestion}</SuggestionText>
                 </SuggestionButton>
               </SuggestionItem>
             ))}

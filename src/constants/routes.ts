@@ -5,6 +5,8 @@ export const AppRoutes = {
   Shorts: '/shorts',
   Subscriptions: '/subscriptions',
   History: '/history',
+  Downloads: '/downloads',
+
   Channel: '/channel/:channelId',
 } as const;
 

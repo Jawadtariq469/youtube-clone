@@ -17,6 +17,8 @@ export const useSearchSuggestions = (searchValue: string) => {
 
     enabled: normalizedSearchValue.length > 0,
 
+    placeholderData: (previousSuggestions) => previousSuggestions,
+
     staleTime: 10 * 60 * 1000,
 
     gcTime: 30 * 60 * 1000,

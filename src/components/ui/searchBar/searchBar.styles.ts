@@ -74,22 +74,21 @@ export const SuggestionsList = styled.ul<SuggestionsListProps>`
   max-height: 440px;
 
   margin: 0;
-  padding: 8px 0;
+  padding: 8px;
 
   overflow-x: hidden;
   overflow-y: auto;
 
   list-style: none;
-
   border: ${({ $appTheme }) => $appTheme.border.width.thin} solid
-    ${({ $appTheme }) => $appTheme.colors.input.border};
+    ${({ $appTheme }) => $appTheme.colors.border.subtle};
 
   /* Don't use the pill-shaped input radius here */
   border-radius: 12px;
 
-  background-color: ${({ $appTheme }) => $appTheme.colors.background.page};
+  background-color: ${({ $appTheme }) => $appTheme.colors.background.elevated};
 
-  box-shadow: 0 4px 16px rgb(0 0 0 / 22%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 24%);
 `;
 
 export const SuggestionItem = styled.li`
@@ -104,9 +103,10 @@ export const SuggestionButton = styled.button<SuggestionButtonProps>`
   width: 100%;
   min-height: 40px;
 
-  padding: 8px 16px;
+  padding: 8px 12px;
 
   border: none;
+  border-radius: 8px;
 
   color: ${({ $appTheme }) => $appTheme.colors.text.primary};
 
@@ -137,9 +137,24 @@ export const SuggestionIconContainer = styled.span`
     height: 100%;
   }
 `;
+export const SuggestionText = styled.span`
+  flex: 1;
+  min-width: 0;
 
-export const SuggestionsLoading = styled.li<SuggestionsListProps>`
-  padding: 12px 16px;
+  overflow: hidden;
 
-  color: ${({ $appTheme }) => $appTheme.colors.text.primary};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const SuggestionsEmpty = styled.li<SuggestionsListProps>`
+  padding: 14px 12px;
+
+  overflow-wrap: anywhere;
+
+  color: ${({ $appTheme }) => $appTheme.colors.text.secondary};
+
+  font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
+  font-size: 14px;
+  line-height: 1.4;
 `;

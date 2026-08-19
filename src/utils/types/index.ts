@@ -6,3 +6,4 @@ export * from './comment';
 export * from './watchHistory';
 export * from './subscription';
 export * from './channel';
+export * from './download';
