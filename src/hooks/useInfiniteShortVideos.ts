@@ -24,6 +24,14 @@ export const useInfiniteShortVideos = () => {
      */
     staleTime: FIFTEEN_MINUTES,
 
+    /*
+     * Keep previously fetched pages while the
+     * application remains open. This allows the
+     * Shorts page to restore the previous video.
+     */
+    gcTime: Infinity,
+
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
 };

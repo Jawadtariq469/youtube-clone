@@ -44,6 +44,7 @@ const ShortVideo = ({ video, isActive, onOpenWatch }: ShortVideoProps) => {
                   <ShortChannelAvatarImage
                     src={video.channelAvatarUrl}
                     alt=""
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   channelInitial

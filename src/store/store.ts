@@ -5,6 +5,8 @@ import authReducer from './auth/reducer';
 import { subscriptionsReducer } from './subscriptions';
 import downloadsReducer from './downloads/reducer';
 import { persistDownloadedVideos } from './downloads/storage';
+import { likedVideosReducer } from './likedVideos';
+import { watchLaterReducer } from './watchLater';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +15,8 @@ export const store = configureStore({
     history: historyReducer,
     subscriptions: subscriptionsReducer,
     downloads: downloadsReducer,
+    likedVideos: likedVideosReducer,
+    watchLater: watchLaterReducer,
   },
 });
 

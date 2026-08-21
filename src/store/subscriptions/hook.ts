@@ -3,7 +3,10 @@ import { FirebaseError } from 'firebase/app';
 import { useCallback, useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-
+import {
+  getChannelAvatarUrls,
+  normalizeYoutubeImageUrl,
+} from '../../services/youtube/getChannelAvatars';
 import {
   removeChannelSubscription,
   saveChannelSubscription,
@@ -24,7 +27,10 @@ import {
 
 import { selectSubscriptionsState } from './selector';
 
-import type { SubscribableChannel } from '../../utils/types';
+import type {
+  ChannelSubscription,
+  SubscribableChannel,
+} from '../../utils/types';
 import type { AppDispatch } from '../store';
 
 const getSubscriptionsErrorMessage = (error: unknown): string => {
@@ -45,7 +51,46 @@ const getSubscriptionsErrorMessage = (error: unknown): string => {
       return error.message;
   }
 };
+const addChannelAvatarsToSubscriptions = async (
+  subscriptions: ChannelSubscription[],
+): Promise<ChannelSubscription[]> => {
+  const normalizedSubscriptions = subscriptions.map((subscription) =>
+    subscription.channelAvatarUrl
+      ? {
+          ...subscription,
 
+          channelAvatarUrl: normalizeYoutubeImageUrl(
+            subscription.channelAvatarUrl,
+          ),
+        }
+      : subscription,
+  );
+
+  let channelAvatarUrls: Map<string, string>;
+
+  try {
+    channelAvatarUrls = await getChannelAvatarUrls(
+      normalizedSubscriptions.map((subscription) => subscription.channelId),
+    );
+  } catch {
+    return normalizedSubscriptions;
+  }
+
+  return normalizedSubscriptions.map((subscription) => {
+    const channelAvatarUrl =
+      channelAvatarUrls.get(subscription.channelId) ??
+      subscription.channelAvatarUrl;
+
+    if (!channelAvatarUrl) {
+      return subscription;
+    }
+
+    return {
+      ...subscription,
+      channelAvatarUrl,
+    };
+  });
+};
 export const useSubscriptionsObserver = (): void => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -67,11 +112,30 @@ export const useSubscriptionsObserver = (): void => {
 
     dispatch(subscriptionsLoadingStarted());
 
-    return subscribeToChannelSubscriptions(
+    let isObserverActive = true;
+
+    let latestSnapshotVersion = 0;
+
+    const unsubscribe = subscribeToChannelSubscriptions(
       userId,
 
       (subscriptions) => {
-        dispatch(subscriptionsLoaded(subscriptions));
+        latestSnapshotVersion += 1;
+
+        const snapshotVersion = latestSnapshotVersion;
+
+        void addChannelAvatarsToSubscriptions(subscriptions).then(
+          (subscriptionsWithAvatars) => {
+            if (
+              !isObserverActive ||
+              snapshotVersion !== latestSnapshotVersion
+            ) {
+              return;
+            }
+
+            dispatch(subscriptionsLoaded(subscriptionsWithAvatars));
+          },
+        );
       },
 
       (error) => {
@@ -80,6 +144,12 @@ export const useSubscriptionsObserver = (): void => {
         );
       },
     );
+
+    return () => {
+      isObserverActive = false;
+
+      unsubscribe();
+    };
   }, [dispatch, isAuthInitialized, userId]);
 };
 

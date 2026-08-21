@@ -1,6 +1,6 @@
 import { youtubeApi } from '../../config';
 
-import { mapYoutubeVideo } from './mapYoutubeVideo';
+import { mapYoutubeVideos } from './mapYoutubeVideo';
 
 import type { Video, VideoPage } from '../../utils/types';
 import type {
@@ -77,10 +77,11 @@ export const searchVideosPage = async (
     videosResponse.data.items.map((video) => [video.id, video]),
   );
 
-  const videos = videoIds
+  const videoItems = videoIds
     .map((videoId) => videosById.get(videoId))
-    .filter((video): video is YouTubeVideoItem => Boolean(video))
-    .map(mapYoutubeVideo);
+    .filter((video): video is YouTubeVideoItem => Boolean(video));
+
+  const videos = await mapYoutubeVideos(videoItems);
 
   return {
     videos,

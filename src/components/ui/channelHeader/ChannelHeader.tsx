@@ -56,6 +56,7 @@ const ChannelHeader = ({
             <ChannelAvatarImage
               src={channel.channelAvatarUrl}
               alt={`${channel.channelTitle} channel`}
+              referrerPolicy="no-referrer"
             />
           ) : (
             channelInitial

@@ -8,3 +8,6 @@ export const selectIsHistoryLoading = (state: RootState) =>
   state.history.isLoading;
 
 export const selectHistoryError = (state: RootState) => state.history.error;
+
+export const selectIsHistoryPaused = (state: RootState) =>
+  state.history.isPaused;

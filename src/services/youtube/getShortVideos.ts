@@ -1,6 +1,6 @@
 import { youtubeApi } from '../../config';
 
-import { mapYoutubeVideo } from './mapYoutubeVideo';
+import { mapYoutubeVideos } from './mapYoutubeVideo';
 
 import { getYoutubeDurationInSeconds } from './youtubeDuration';
 
@@ -82,7 +82,7 @@ export const getShortVideosPage = async (
     videosResponse.data.items.map((videoItem) => [videoItem.id, videoItem]),
   );
 
-  const shortVideos = videoIds
+  const shortVideoItems = videoIds
     .map((videoId) => videosById.get(videoId))
     .filter((videoItem): videoItem is YouTubeVideoItem => Boolean(videoItem))
     .filter((videoItem) => {
@@ -93,8 +93,9 @@ export const getShortVideosPage = async (
       return (
         durationInSeconds > 0 && durationInSeconds <= MAX_SHORT_DURATION_SECONDS
       );
-    })
-    .map(mapYoutubeVideo);
+    });
+
+  const shortVideos = await mapYoutubeVideos(shortVideoItems);
 
   return {
     videos: shortVideos,

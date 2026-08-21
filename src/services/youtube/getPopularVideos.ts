@@ -2,7 +2,7 @@ import { isAxiosError } from 'axios';
 
 import { youtubeApi } from '../../config';
 
-import { mapYoutubeVideo } from './mapYoutubeVideo';
+import { mapYoutubeVideos } from './mapYoutubeVideo';
 import { searchVideosPage } from './searchVideos';
 
 import type { Video, VideoPage } from '../../utils/types';
@@ -58,8 +58,10 @@ export const getPopularVideosPage = async (
 
     const nextPageToken = response.data.nextPageToken;
 
+    const videos = await mapYoutubeVideos(response.data.items);
+
     return {
-      videos: response.data.items.map(mapYoutubeVideo),
+      videos,
 
       ...(nextPageToken
         ? {

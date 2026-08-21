@@ -7,3 +7,5 @@ export * from './watchHistory';
 export * from './subscription';
 export * from './channel';
 export * from './download';
+export * from './likedVideo';
+export * from './watchLaterVideo';

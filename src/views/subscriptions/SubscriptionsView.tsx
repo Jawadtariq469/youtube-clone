@@ -32,7 +32,10 @@ const SubscriptionsView = ({ onVideoSelect }: SubscriptionsViewProps) => {
 
   const {
     items: subscriptions,
+
     isLoading: isSubscriptionsLoading,
+    isInitialized: isSubscriptionsInitialized,
+
     error: subscriptionsError,
   } = useSubscriptions();
 
@@ -52,6 +55,10 @@ const SubscriptionsView = ({ onVideoSelect }: SubscriptionsViewProps) => {
   } = useSubscriptionVideos(channelIds);
 
   const handleSignIn = (): void => {
+    if (isAuthLoading) {
+      return;
+    }
+
     void signInWithGoogle();
   };
 
@@ -61,7 +68,11 @@ const SubscriptionsView = ({ onVideoSelect }: SubscriptionsViewProps) => {
 
   const channelCount = subscriptions.length;
 
-  if (!isAuthInitialized || isAuthLoading) {
+  const shouldShowLoadingState =
+    !isAuthInitialized ||
+    (Boolean(user) && (isAuthLoading || !isSubscriptionsInitialized));
+
+  if (shouldShowLoadingState) {
     return <VideoGridShimmer />;
   }
 

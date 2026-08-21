@@ -17,7 +17,7 @@ import {
 import type { CategoryOption, HomeViewProps } from './types';
 
 const ALL_CATEGORY_ID = '0';
-
+const LOAD_MORE_SHIMMER_CARD_COUNT = 6;
 const categoryOptions = [
   {
     id: ALL_CATEGORY_ID,
@@ -158,7 +158,7 @@ const HomeView = ({ onVideoSelect }: HomeViewProps) => {
 
       {isFetchingNextPage && (
         <LoadingMoreContainer>
-          <VideoGridShimmer />
+          <VideoGridShimmer itemCount={LOAD_MORE_SHIMMER_CARD_COUNT} />
         </LoadingMoreContainer>
       )}
 

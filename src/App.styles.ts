@@ -48,7 +48,13 @@ export const DesktopSidebarSlot = styled.div<AppThemeProps>`
 export const MainContent = styled.main<MainContentProps>`
   flex: 1;
   min-width: 0;
+  height: ${({ $appTheme, $isWatchPage }) =>
+    $isWatchPage ? `calc(100vh - ${$appTheme.header.height.desktop})` : 'auto'};
 
+  height: ${({ $appTheme, $isWatchPage }) =>
+    $isWatchPage
+      ? `calc(100dvh - ${$appTheme.header.height.desktop})`
+      : 'auto'};
   min-height: calc(
     100vh - ${({ $appTheme }) => $appTheme.header.height.desktop}
   );
@@ -76,6 +82,13 @@ export const MainContent = styled.main<MainContentProps>`
   font-family: ${({ $appTheme }) => $appTheme.font.family.primary};
 
   box-sizing: border-box;
+  overflow: ${({ $isWatchPage }) => ($isWatchPage ? 'hidden' : 'visible')};
+
+  @media (max-width: 1100px) {
+    height: auto;
+
+    overflow: visible;
+  }
 
   @media (max-width: ${({ $appTheme }) => $appTheme.breakpoint.md}px) {
     width: 100%;

@@ -1,6 +1,6 @@
 import { youtubeApi } from '../../config';
 
-import { mapYoutubeVideo } from './mapYoutubeVideo';
+import { mapYoutubeVideos } from './mapYoutubeVideo';
 
 import type { Video } from '../../utils/types';
 
@@ -97,6 +97,7 @@ export const getSubscriptionVideos = async (
       const response = await youtubeApi.get<YouTubeVideosResponse>('/videos', {
         params: {
           part: 'snippet,contentDetails,statistics',
+
           id: videoIdGroup.join(','),
         },
       });
@@ -105,9 +106,9 @@ export const getSubscriptionVideos = async (
     }),
   );
 
-  return videoResponses
-    .flat()
-    .map(mapYoutubeVideo)
+  const videos = await mapYoutubeVideos(videoResponses.flat());
+
+  return videos
     .sort((firstVideo, secondVideo) => {
       const firstPublishedTime = Date.parse(firstVideo.publishedAt) || 0;
 

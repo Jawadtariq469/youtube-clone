@@ -11,6 +11,7 @@ export {
   selectHistoryItems,
   selectHistoryState,
   selectIsHistoryLoading,
+  selectIsHistoryPaused,
 } from './selector';
 
 export type { HistoryState } from './types';

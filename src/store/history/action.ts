@@ -17,3 +17,7 @@ export const historyRequestFailed = createAction<string>(
 );
 
 export const historyErrorCleared = createAction('history/errorCleared');
+
+export const historyPauseChanged = createAction<boolean>(
+  'history/pauseChanged',
+);

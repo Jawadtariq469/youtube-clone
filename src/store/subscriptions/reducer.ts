@@ -49,7 +49,12 @@ const subscriptionsReducer = createReducer(
 
         items: [],
         isLoading: false,
-        isInitialized: true,
+
+        /*
+         * Signed-out subscriptions are not initialized
+         * for any authenticated user.
+         */
+        isInitialized: false,
       }))
 
       .addCase(subscriptionMutationStarted, (state) => {

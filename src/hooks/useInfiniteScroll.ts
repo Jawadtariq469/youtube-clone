@@ -14,6 +14,28 @@ interface UseInfiniteScrollOptions {
 
 const LOAD_AHEAD_DISTANCE = 600;
 
+const SCROLLABLE_OVERFLOW_VALUES = new Set(['auto', 'scroll', 'overlay']);
+
+const findScrollableAncestor = (element: HTMLElement): HTMLElement | null => {
+  let currentElement = element.parentElement;
+
+  while (
+    currentElement &&
+    currentElement !== document.body &&
+    currentElement !== document.documentElement
+  ) {
+    const { overflowY } = window.getComputedStyle(currentElement);
+
+    if (SCROLLABLE_OVERFLOW_VALUES.has(overflowY)) {
+      return currentElement;
+    }
+
+    currentElement = currentElement.parentElement;
+  }
+
+  return null;
+};
+
 export const useInfiniteScroll = ({
   hasNextPage,
   isFetchingNextPage,
@@ -33,7 +55,12 @@ export const useInfiniteScroll = ({
       return;
     }
 
+    const scrollableAncestor = findScrollableAncestor(sentinelElement);
+
+    const scrollEventTarget: EventTarget = scrollableAncestor ?? window;
+
     let animationFrameId: number | null = null;
+
     let hasTriggered = false;
 
     const checkSentinelPosition = (): void => {
@@ -44,8 +71,8 @@ export const useInfiniteScroll = ({
       }
 
       /*
-       * On mobile the sentinel is display:none because
-       * mobile uses the Show more button.
+       * The sentinel is hidden on smaller screens
+       * because they use a manual load-more button.
        */
       if (sentinelElement.getClientRects().length === 0) {
         return;
@@ -53,13 +80,18 @@ export const useInfiniteScroll = ({
 
       const sentinelTop = sentinelElement.getBoundingClientRect().top;
 
-      const loadMorePosition = window.innerHeight + LOAD_AHEAD_DISTANCE;
+      const visibleAreaBottom = scrollableAncestor
+        ? scrollableAncestor.getBoundingClientRect().bottom
+        : window.innerHeight;
+
+      const loadMorePosition = visibleAreaBottom + LOAD_AHEAD_DISTANCE;
 
       if (sentinelTop > loadMorePosition) {
         return;
       }
 
       hasTriggered = true;
+
       onLoadMore();
     };
 
@@ -72,19 +104,19 @@ export const useInfiniteScroll = ({
     };
 
     /*
-     * Check immediately because the user may already
-     * be near or below the sentinel.
+     * Check immediately so enough content is loaded
+     * to fill the selected scrollable column.
      */
     schedulePositionCheck();
 
-    window.addEventListener('scroll', schedulePositionCheck, {
+    scrollEventTarget.addEventListener('scroll', schedulePositionCheck, {
       passive: true,
     });
 
     window.addEventListener('resize', schedulePositionCheck);
 
     return () => {
-      window.removeEventListener('scroll', schedulePositionCheck);
+      scrollEventTarget.removeEventListener('scroll', schedulePositionCheck);
 
       window.removeEventListener('resize', schedulePositionCheck);
 

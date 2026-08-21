@@ -6,9 +6,11 @@ import {
   historyLoadingStarted,
   historyMutationFinished,
   historyMutationStarted,
+  historyPauseChanged,
   historyRequestFailed,
   historyReset,
 } from './action';
+import { readIsHistoryPaused } from './storage';
 
 import type { HistoryState } from './types';
 
@@ -18,6 +20,7 @@ const initialHistoryState: HistoryState = {
   isLoading: true,
   isInitialized: false,
   isMutating: false,
+  isPaused: readIsHistoryPaused(),
 
   error: null,
 };
@@ -42,12 +45,19 @@ const historyReducer = createReducer(initialHistoryState, (builder) => {
       state.error = null;
     })
 
-    .addCase(historyReset, () => ({
+    .addCase(historyReset, (state) => ({
       ...initialHistoryState,
 
       items: [],
       isLoading: false,
-      isInitialized: true,
+
+      /*
+       * Signed-out history is not initialized
+       * for any authenticated user.
+       */
+      isInitialized: false,
+
+      isPaused: state.isPaused,
     }))
 
     .addCase(historyMutationStarted, (state) => {
@@ -69,6 +79,10 @@ const historyReducer = createReducer(initialHistoryState, (builder) => {
 
     .addCase(historyErrorCleared, (state) => {
       state.error = null;
+    })
+
+    .addCase(historyPauseChanged, (state, action) => {
+      state.isPaused = action.payload;
     });
 });
 

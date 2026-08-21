@@ -59,7 +59,11 @@ export const ShortActionButton = styled.button<ShortActionButtonProps>`
 
   cursor: pointer;
   touch-action: manipulation;
+  &:disabled {
+    cursor: wait;
 
+    opacity: 0.62;
+  }
   &:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 4px;

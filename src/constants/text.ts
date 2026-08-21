@@ -52,5 +52,7 @@ export const AppText = {
     Subscriptions: 'Subscriptions',
     History: 'History',
     Downloads: 'Downloads',
+    LikedVideos: 'Liked videos',
+    WatchLater: 'Watch Later',
   },
 } as const;

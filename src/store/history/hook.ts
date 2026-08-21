@@ -23,11 +23,13 @@ import {
   historyLoadingStarted,
   historyMutationFinished,
   historyMutationStarted,
+  historyPauseChanged,
   historyRequestFailed,
   historyReset,
 } from './action';
 
-import { selectHistoryState } from './selector';
+import { selectHistoryState, selectIsHistoryPaused } from './selector';
+import { persistIsHistoryPaused } from './storage';
 
 const getHistoryErrorMessage = (error: unknown): string => {
   if (!(error instanceof FirebaseError)) {
@@ -90,12 +92,14 @@ export const useRecordWatchHistory = (
 
   const user = useSelector(selectAuthUser);
 
+  const isHistoryPaused = useSelector(selectIsHistoryPaused);
+
   const recordedHistoryKeyRef = useRef<string | null>(null);
 
   const userId = user?.id;
 
   useEffect(() => {
-    if (!userId || !video) {
+    if (!userId || !video || isHistoryPaused) {
       return;
     }
 
@@ -112,7 +116,7 @@ export const useRecordWatchHistory = (
 
       dispatch(historyRequestFailed(getHistoryErrorMessage(error)));
     });
-  }, [dispatch, userId, video]);
+  }, [dispatch, isHistoryPaused, userId, video]);
 };
 
 export const useWatchHistory = () => {
@@ -161,11 +165,20 @@ export const useWatchHistory = () => {
     dispatch(historyErrorCleared());
   }, [dispatch]);
 
+  const setHistoryPaused = useCallback(
+    (isPaused: boolean): void => {
+      persistIsHistoryPaused(isPaused);
+      dispatch(historyPauseChanged(isPaused));
+    },
+    [dispatch],
+  );
+
   return {
     ...historyState,
 
     removeVideo,
     clearHistory,
     clearError,
+    setHistoryPaused,
   };
 };

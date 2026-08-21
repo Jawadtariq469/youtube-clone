@@ -6,6 +6,7 @@ export interface HistoryState {
   isLoading: boolean;
   isInitialized: boolean;
   isMutating: boolean;
+  isPaused: boolean;
 
   error: string | null;
 }

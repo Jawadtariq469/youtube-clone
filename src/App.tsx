@@ -23,12 +23,18 @@ import {
 import { useSubscriptionsObserver } from './store/subscriptions';
 import ChannelView from './views/channel/ChannelView';
 import DownloadsView from './views/downloads/DownloadsView';
+import LikedVideosView from './views/likedVideos/LikedVideosView';
+import WatchLaterView from './views/watchLater/WatchLaterView';
 
+import { useWatchLaterObserver } from './store/watchLater';
+import { useLikedVideosObserver } from './store/likedVideos';
 import { AppQueryParameters, AppRoutes, getChannelPath } from './constants';
 const App = () => {
   useAuthObserver();
   useHistoryObserver();
   useSubscriptionsObserver();
+  useLikedVideosObserver();
+  useWatchLaterObserver();
   useScrollToTop();
 
   const navigate = useNavigate();
@@ -199,6 +205,14 @@ const App = () => {
             <Route
               path={AppRoutes.Downloads}
               element={<DownloadsView onVideoSelect={handleVideoSelect} />}
+            />
+            <Route
+              path={AppRoutes.LikedVideos}
+              element={<LikedVideosView onVideoSelect={handleVideoSelect} />}
+            />
+            <Route
+              path={AppRoutes.WatchLater}
+              element={<WatchLaterView onVideoSelect={handleVideoSelect} />}
             />
           </Routes>
         </MainContent>

@@ -1,10 +1,20 @@
+import { useState } from 'react';
+
 import { Skeleton } from '../../components/elements';
-import { DownloadIcon } from '../../components/icons';
+
+import {
+  DownloadIcon,
+  LikeOutlineIcon,
+  ShareOutlineIcon,
+  WatchLaterIcon,
+} from '../../components/icons';
 
 import { useAuth } from '../../store/auth';
 import { useDownloads } from '../../store/downloads';
 import { useTheme } from '../../store/global';
+import { useLikedVideos } from '../../store/likedVideos';
 import { useSubscriptions } from '../../store/subscriptions';
+import { useWatchLater } from '../../store/watchLater';
 
 import {
   formatPublishedDate,
@@ -42,9 +52,25 @@ const WatchInformation = ({
   error,
   onChannelSelect,
 }: WatchInformationProps) => {
+  const [copiedVideoId, setCopiedVideoId] = useState<string | null>(null);
+
   const { theme } = useTheme();
 
   const { user, signInWithGoogle } = useAuth();
+
+  const {
+    isLoading: isLikedVideosLoading,
+    isLiked,
+    isLikeMutating,
+    toggleLike,
+  } = useLikedVideos();
+
+  const {
+    isLoading: isWatchLaterLoading,
+    isInWatchLater,
+    isWatchLaterMutating,
+    toggleWatchLater,
+  } = useWatchLater();
 
   const { downloadVideo, isDownloaded, removeDownload } = useDownloads();
 
@@ -58,6 +84,22 @@ const WatchInformation = ({
   const channelIsSubscribed = video ? isSubscribed(video.channelId) : false;
 
   const videoIsDownloaded = video ? isDownloaded(video.id) : false;
+
+  const videoIsLiked = video ? isLiked(video.id) : false;
+
+  const videoIsInWatchLater = video ? isInWatchLater(video.id) : false;
+
+  const isWatchLaterButtonMutating = video
+    ? isWatchLaterMutating(video.id)
+    : false;
+
+  const isWatchLaterButtonDisabled =
+    Boolean(user) && (isWatchLaterLoading || isWatchLaterButtonMutating);
+
+  const isLikeButtonMutating = video ? isLikeMutating(video.id) : false;
+
+  const isLikeButtonDisabled =
+    Boolean(user) && (isLikedVideosLoading || isLikeButtonMutating);
 
   const isSubscriptionButtonDisabled =
     Boolean(user) && (isSubscriptionsLoading || isSubscriptionMutating);
@@ -96,6 +138,74 @@ const WatchInformation = ({
     }
 
     downloadVideo(video);
+  };
+
+  const handleLikeToggle = (): void => {
+    if (!video) {
+      return;
+    }
+
+    if (!user) {
+      void signInWithGoogle();
+
+      return;
+    }
+
+    void toggleLike(video);
+  };
+
+  const handleWatchLaterToggle = (): void => {
+    if (!video) {
+      return;
+    }
+
+    if (!user) {
+      void signInWithGoogle();
+
+      return;
+    }
+
+    void toggleWatchLater(video);
+  };
+
+  const handleShare = async (): Promise<void> => {
+    if (!video) {
+      return;
+    }
+
+    /*
+     * This is the current page from
+     * your own website, including
+     * the selected video ID.
+     */
+    const videoUrl = window.location.href;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: video.title,
+          text: `Watch ${video.title}`,
+          url: videoUrl,
+        });
+
+        return;
+      }
+
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(videoUrl);
+
+        setCopiedVideoId(video.id);
+
+        return;
+      }
+
+      window.prompt('Copy this video link:', videoUrl);
+    } catch {
+      /*
+       * The user may cancel the
+       * operating-system share dialog.
+       */
+    }
   };
 
   if (isLoading) {
@@ -139,6 +249,8 @@ const WatchInformation = ({
           ? 'Subscribed'
           : 'Subscribe';
 
+  const shareButtonText = copiedVideoId === video.id ? 'Copied' : 'Share';
+
   return (
     <WatchInformationContainer>
       <VideoTitle>{video.title}</VideoTitle>
@@ -153,7 +265,11 @@ const WatchInformation = ({
           >
             <ChannelAvatar>
               {video.channelAvatarUrl ? (
-                <ChannelAvatarImage src={video.channelAvatarUrl} alt="" />
+                <ChannelAvatarImage
+                  src={video.channelAvatarUrl}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                />
               ) : (
                 <ChannelInitial>
                   {video.channelTitle.trim().charAt(0) || '?'}
@@ -182,12 +298,59 @@ const WatchInformation = ({
         </ChannelActions>
 
         <ActionButtons>
-          <ActionButton type="button" $appTheme={theme}>
-            👍 Like
+          <ActionButton
+            type="button"
+            $appTheme={theme}
+            $isActive={videoIsLiked}
+            disabled={isLikeButtonDisabled}
+            aria-pressed={videoIsLiked}
+            aria-label={
+              videoIsLiked ? 'Remove video from liked videos' : 'Like video'
+            }
+            onClick={handleLikeToggle}
+          >
+            <LikeOutlineIcon fill={videoIsLiked ? 'currentColor' : 'none'} />
+
+            {isLikeButtonMutating
+              ? 'Saving...'
+              : videoIsLiked
+                ? 'Liked'
+                : 'Like'}
           </ActionButton>
 
-          <ActionButton type="button" $appTheme={theme}>
-            Share
+          <ActionButton
+            type="button"
+            $appTheme={theme}
+            aria-label={`Share ${video.title}`}
+            onClick={() => {
+              void handleShare();
+            }}
+          >
+            <ShareOutlineIcon />
+
+            {shareButtonText}
+          </ActionButton>
+
+          <ActionButton
+            type="button"
+            $appTheme={theme}
+            $isActive={videoIsInWatchLater}
+            disabled={isWatchLaterButtonDisabled}
+            aria-pressed={videoIsInWatchLater}
+            aria-label={
+              videoIsInWatchLater
+                ? 'Remove video from Watch Later'
+                : 'Save video to Watch Later'
+            }
+            onClick={handleWatchLaterToggle}
+          >
+            <WatchLaterIcon />
+
+            {isWatchLaterButtonMutating
+              ? 'Saving...'
+              : videoIsInWatchLater
+                ? 'Saved'
+                : 'Watch later'}
           </ActionButton>
 
           <ActionButton

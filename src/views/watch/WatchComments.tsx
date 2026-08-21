@@ -1,9 +1,15 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { isAxiosError } from 'axios';
 
 import { Comments } from '../../components/ui';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import { useVideoComments } from '../../hooks/useVideoComments';
 import { useAuth } from '../../store/auth';
+
+import {
+  DesktopCommentsInfiniteScrollSentinel,
+  DesktopCommentsLoadingStatus,
+} from './watchView.styles';
 
 import type { YouTubeApiErrorResponse } from '../../services/youtube/types';
 import type { VideoComment } from '../../utils/types';
@@ -91,29 +97,57 @@ const WatchComments = ({ videoId }: WatchCommentsProps) => {
     });
   };
 
-  const handleLoadMore = (): void => {
+  const handleLoadMore = useCallback((): void => {
     if (!hasNextPage || isFetchingNextPage) {
       return;
     }
 
-    void fetchNextPage();
-  };
+    void fetchNextPage({
+      cancelRefetch: false,
+    });
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  const hasMoreComments = Boolean(hasNextPage) && !commentsDisabled && !isError;
+
+  const infiniteScrollResetKey = `${videoId}-${data?.pages.length ?? 0}`;
+
+  const commentsInfiniteScrollRef = useInfiniteScroll({
+    hasNextPage: hasMoreComments,
+    isFetchingNextPage,
+    onLoadMore: handleLoadMore,
+    resetKey: infiniteScrollResetKey,
+  });
 
   return (
-    <Comments
-      comments={comments}
-      totalComments={totalComments}
-      currentUser={user}
-      isAuthLoading={isAuthLoading}
-      isLoading={isPending}
-      isError={isError && !commentsDisabled}
-      isCommentsDisabled={commentsDisabled}
-      hasMoreComments={Boolean(hasNextPage)}
-      isLoadingMore={isFetchingNextPage}
-      onSignIn={handleSignIn}
-      onCommentSubmit={handleCommentSubmit}
-      onLoadMore={handleLoadMore}
-    />
+    <>
+      <Comments
+        comments={comments}
+        totalComments={totalComments}
+        currentUser={user}
+        isAuthLoading={isAuthLoading}
+        isLoading={isPending}
+        isError={isError && !commentsDisabled}
+        isCommentsDisabled={commentsDisabled}
+        hasMoreComments={hasMoreComments}
+        isLoadingMore={isFetchingNextPage}
+        onSignIn={handleSignIn}
+        onCommentSubmit={handleCommentSubmit}
+        onLoadMore={handleLoadMore}
+      />
+
+      {hasMoreComments && (
+        <DesktopCommentsInfiniteScrollSentinel
+          ref={commentsInfiniteScrollRef}
+          aria-hidden="true"
+        />
+      )}
+
+      {isFetchingNextPage && (
+        <DesktopCommentsLoadingStatus role="status">
+          Loading more comments...
+        </DesktopCommentsLoadingStatus>
+      )}
+    </>
   );
 };
 

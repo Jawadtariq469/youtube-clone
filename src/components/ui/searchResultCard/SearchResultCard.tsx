@@ -109,7 +109,11 @@ const SearchResultCard = ({ video, onSelect }: SearchResultCardProps) => {
         <ChannelInformation>
           <ChannelAvatar>
             {video.channelAvatarUrl ? (
-              <ChannelAvatarImage src={video.channelAvatarUrl} alt="" />
+              <ChannelAvatarImage
+                src={video.channelAvatarUrl}
+                alt=""
+                referrerPolicy="no-referrer"
+              />
             ) : (
               <ChannelInitial>{channelInitial}</ChannelInitial>
             )}

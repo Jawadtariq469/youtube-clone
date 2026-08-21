@@ -1,5 +1,7 @@
 import { youtubeApi } from '../../config';
 
+import { normalizeYoutubeImageUrl } from './getChannelAvatars';
+
 import type { ChannelDetails } from '../../utils/types';
 import type { YouTubeChannelsResponse } from './types';
 
@@ -44,14 +46,19 @@ export const getChannelById = async (
     ? undefined
     : Number(channel.statistics.subscriberCount ?? 0);
 
-  const bannerUrl =
+  const rawBannerUrl =
     channel.brandingSettings?.image?.bannerExternalUrl ??
     channel.brandingSettings?.image?.bannerImageUrl;
+
+  const bannerUrl = rawBannerUrl
+    ? normalizeYoutubeImageUrl(rawBannerUrl)
+    : undefined;
 
   return {
     channelId: channel.id,
     channelTitle: channel.snippet.title,
-    channelAvatarUrl: thumbnail.url,
+
+    channelAvatarUrl: normalizeYoutubeImageUrl(thumbnail.url),
 
     description: channel.snippet.description,
     publishedAt: channel.snippet.publishedAt,

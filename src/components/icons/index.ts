@@ -10,9 +10,18 @@ export { default as ShortsIcon } from './svg/ShortsIcon';
 export { default as SubscriptionsIcon } from './svg/SubscriptionsIcon';
 export { default as DownloadIcon } from './svg/DownloadIcon';
 export {
+  MoreVerticalIcon,
+  PauseIcon,
+  ResumeIcon,
+  SettingsIcon,
+  TrashIcon,
+} from './HistoryActionsIcons';
+export {
   CommentOutlineIcon,
   LikeOutlineIcon,
   PlayFilledIcon,
   ShareOutlineIcon,
 } from './ShortsActionsIcons';
 export { MoonIcon, SunIcon } from './ThemeIcons';
+export { default as ShuffleIcon } from './svg/ShuffleIcon';
+export { default as WatchLaterIcon } from './svg/WatchLaterIcon';

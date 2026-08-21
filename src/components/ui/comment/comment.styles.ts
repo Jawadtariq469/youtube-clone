@@ -188,3 +188,8 @@ export const CommentSkeletonContent = styled.div`
 
   padding-top: 2px;
 `;
+export const CommentsLoadMoreRow = styled(CommentButtonRow)`
+  @media (min-width: 1101px) {
+    display: none;
+  }
+`;

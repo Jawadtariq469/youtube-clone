@@ -1,5 +1,6 @@
 import type { Video } from '../../utils/types';
 
+import { addChannelAvatarsToVideos } from './getChannelAvatars';
 import { formatYoutubeDuration } from './youtubeDuration';
 
 import type { YouTubeVideoItem } from './types';
@@ -30,4 +31,13 @@ export const mapYoutubeVideo = (item: YouTubeVideoItem): Video => {
 
     category: item.snippet.categoryId,
   };
+};
+
+export const mapYoutubeVideos = async (
+  items: readonly YouTubeVideoItem[],
+  signal?: AbortSignal,
+): Promise<Video[]> => {
+  const videos = items.map(mapYoutubeVideo);
+
+  return addChannelAvatarsToVideos(videos, signal);
 };

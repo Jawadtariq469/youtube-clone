@@ -44,7 +44,6 @@ const ShortPlayer = ({ video, isActive }: ShortPlayerProps) => {
 
   const playerParameters = new URLSearchParams({
     autoplay: '1',
-    mute: '1',
     controls: '1',
 
     enablejsapi: '1',

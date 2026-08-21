@@ -1,5 +1,6 @@
 import { Button } from '../../elements';
 import { formatViewCount } from '../../../utils/videoFormatters';
+
 import {
   ButtonHtmlType,
   ButtonSize,
@@ -11,9 +12,9 @@ import CommentThread from './CommentThread';
 import CommentsSkeleton from './CommentsSkeleton';
 
 import {
-  CommentButtonRow,
   CommentsHeading,
   CommentsList,
+  CommentsLoadMoreRow,
   CommentsSection,
   CommentsStatusMessage,
 } from './comment.styles';
@@ -88,7 +89,7 @@ const Comments = ({
           </CommentsList>
 
           {hasMoreComments && (
-            <CommentButtonRow>
+            <CommentsLoadMoreRow>
               <Button
                 type={ButtonHtmlType.Button}
                 variant={ButtonVariant.Secondary}
@@ -98,7 +99,7 @@ const Comments = ({
               >
                 {isLoadingMore ? 'Loading comments...' : 'Load more comments'}
               </Button>
-            </CommentButtonRow>
+            </CommentsLoadMoreRow>
           )}
         </>
       )}

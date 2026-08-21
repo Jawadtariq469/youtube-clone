@@ -1,10 +1,10 @@
-type YouTubeThumbnail = {
+export type YouTubeThumbnail = {
   url: string;
   width?: number;
   height?: number;
 };
 
-type YouTubeThumbnails = {
+export type YouTubeThumbnails = {
   default: YouTubeThumbnail;
   medium?: YouTubeThumbnail;
   high?: YouTubeThumbnail;
@@ -162,6 +162,16 @@ export type YouTubeChannelsResponse = {
         bannerExternalUrl?: string;
         bannerImageUrl?: string;
       };
+    };
+  }>;
+};
+
+export type YouTubeChannelAvatarsResponse = {
+  items: Array<{
+    id: string;
+
+    snippet: {
+      thumbnails: YouTubeThumbnails;
     };
   }>;
 };

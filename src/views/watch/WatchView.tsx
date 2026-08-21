@@ -1,10 +1,15 @@
+import { useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { VideoPlayer } from '../../components/ui';
 import { AppConstants, AppQueryParameters } from '../../constants';
+
 import { useMediaQuery } from '../../hooks/useMediaQuerry';
 import { useVideoDetails } from '../../hooks/useVideoDetails';
-import { useRecordWatchHistory } from '../../store/history';
+
+import { useAppSelector } from '../../store/global';
+
+import { selectHistoryItems, useRecordWatchHistory } from '../../store/history';
 
 import WatchComments from './WatchComments';
 import WatchInformation from './WatchInformation';
@@ -19,11 +24,25 @@ import {
   WatchPage,
 } from './watchView.styles';
 
+import type { UIEvent as ReactUIEvent } from 'react';
 import type { WatchViewProps } from './types';
 
 const VIDEO_ID_PATTERN = /^[a-zA-Z0-9_-]{11}$/;
 
 const STACKED_LAYOUT_QUERY = '(max-width: 1100px)';
+
+const WHEEL_LINE_HEIGHT = 16;
+
+const getMaximumScrollTop = (element: HTMLElement): number => {
+  return Math.max(0, element.scrollHeight - element.clientHeight);
+};
+
+const clampScrollProgress = (
+  progress: number,
+  maximumProgress: number,
+): number => {
+  return Math.min(Math.max(progress, 0), maximumProgress);
+};
 
 const WatchView = ({
   autoPlay = true,
@@ -31,6 +50,16 @@ const WatchView = ({
   onChannelSelect,
 }: WatchViewProps) => {
   const [searchParameters] = useSearchParams();
+
+  const watchLayoutRef = useRef<HTMLDivElement | null>(null);
+
+  const primaryColumnRef = useRef<HTMLDivElement | null>(null);
+
+  const recommendationsColumnRef = useRef<HTMLDivElement | null>(null);
+
+  const isApplyingSynchronizedScrollRef = useRef(false);
+
+  const synchronizationFrameRef = useRef<number | null>(null);
 
   const isStackedLayout = useMediaQuery(STACKED_LAYOUT_QUERY);
 
@@ -47,7 +76,167 @@ const WatchView = ({
     error,
   } = useVideoDetails(isValidVideoId ? videoId : AppConstants.EmptyString);
 
-  useRecordWatchHistory(video);
+  const historyItems = useAppSelector(selectHistoryItems);
+
+  const historyVideo = historyItems.find(
+    (historyItem) => historyItem.id === videoId,
+  );
+
+  /*
+   * Use History information while fresh video
+   * details are loading or temporarily unavailable.
+   */
+  const resolvedVideo = video ?? historyVideo;
+
+  const isVideoInformationLoading = isPending && !resolvedVideo;
+
+  const isVideoInformationError = isError && !resolvedVideo;
+
+  useRecordWatchHistory(resolvedVideo);
+
+  const shouldDisplayComments =
+    !isVideoInformationLoading &&
+    !isVideoInformationError &&
+    Boolean(resolvedVideo);
+
+  const applySynchronizedScroll = useCallback((progress: number): void => {
+    const primaryColumn = primaryColumnRef.current;
+
+    const recommendationsColumn = recommendationsColumnRef.current;
+
+    if (!primaryColumn || !recommendationsColumn) {
+      return;
+    }
+
+    const primaryMaximumScrollTop = getMaximumScrollTop(primaryColumn);
+
+    const recommendationsMaximumScrollTop = getMaximumScrollTop(
+      recommendationsColumn,
+    );
+
+    isApplyingSynchronizedScrollRef.current = true;
+
+    /*
+     * Both columns receive the same progress.
+     *
+     * When one column reaches its maximum,
+     * it stays there while the longer column
+     * continues scrolling.
+     */
+    primaryColumn.scrollTop = Math.min(progress, primaryMaximumScrollTop);
+
+    recommendationsColumn.scrollTop = Math.min(
+      progress,
+      recommendationsMaximumScrollTop,
+    );
+
+    if (synchronizationFrameRef.current !== null) {
+      window.cancelAnimationFrame(synchronizationFrameRef.current);
+    }
+
+    synchronizationFrameRef.current = window.requestAnimationFrame(() => {
+      isApplyingSynchronizedScrollRef.current = false;
+
+      synchronizationFrameRef.current = null;
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (synchronizationFrameRef.current !== null) {
+        window.cancelAnimationFrame(synchronizationFrameRef.current);
+      }
+    };
+  }, []);
+
+  /*
+   * Desktop synchronized wheel scrolling.
+   */
+  useEffect(() => {
+    const watchLayout = watchLayoutRef.current;
+
+    if (!watchLayout || isStackedLayout) {
+      return;
+    }
+
+    const handleWatchLayoutWheel = (event: WheelEvent): void => {
+      /*
+       * Do not interfere with browser zoom or
+       * horizontal trackpad scrolling.
+       */
+      if (event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+        return;
+      }
+
+      const primaryColumn = primaryColumnRef.current;
+
+      const recommendationsColumn = recommendationsColumnRef.current;
+
+      if (!primaryColumn || !recommendationsColumn) {
+        return;
+      }
+
+      const primaryMaximumScrollTop = getMaximumScrollTop(primaryColumn);
+
+      const recommendationsMaximumScrollTop = getMaximumScrollTop(
+        recommendationsColumn,
+      );
+
+      const maximumProgress = Math.max(
+        primaryMaximumScrollTop,
+        recommendationsMaximumScrollTop,
+      );
+
+      /*
+       * The longer column represents the current
+       * shared scrolling progress.
+       */
+      const currentProgress = Math.max(
+        primaryColumn.scrollTop,
+        recommendationsColumn.scrollTop,
+      );
+
+      const wheelDelta =
+        event.deltaMode === WheelEvent.DOM_DELTA_LINE
+          ? event.deltaY * WHEEL_LINE_HEIGHT
+          : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+            ? event.deltaY * primaryColumn.clientHeight
+            : event.deltaY;
+
+      const nextProgress = clampScrollProgress(
+        currentProgress + wheelDelta,
+        maximumProgress,
+      );
+
+      if (nextProgress === currentProgress) {
+        return;
+      }
+
+      event.preventDefault();
+
+      applySynchronizedScroll(nextProgress);
+    };
+
+    watchLayout.addEventListener('wheel', handleWatchLayoutWheel, {
+      passive: false,
+    });
+
+    return () => {
+      watchLayout.removeEventListener('wheel', handleWatchLayoutWheel);
+    };
+  }, [applySynchronizedScroll, isStackedLayout, videoId]);
+
+  /*
+   * Keeps both columns synchronized when the
+   * scrollbar, keyboard, or iframe causes scrolling.
+   */
+  const handleColumnScroll = (event: ReactUIEvent<HTMLDivElement>): void => {
+    if (isStackedLayout || isApplyingSynchronizedScrollRef.current) {
+      return;
+    }
+
+    applySynchronizedScroll(event.currentTarget.scrollTop);
+  };
 
   if (!videoId) {
     return <StatusMessage>No video was selected.</StatusMessage>;
@@ -57,53 +246,44 @@ const WatchView = ({
     return <StatusMessage>The video ID is invalid.</StatusMessage>;
   }
 
-  const shouldDisplayComments = !isPending && !isError && Boolean(video);
-
   return (
     <WatchPage>
-      <WatchLayout>
-        <PrimaryColumn>
+      <WatchLayout ref={watchLayoutRef} key={videoId}>
+        <PrimaryColumn ref={primaryColumnRef} onScroll={handleColumnScroll}>
           <VideoPlayer
             videoId={videoId}
-            title={video?.title ?? 'YouTube video'}
+            title={resolvedVideo?.title ?? 'YouTube video'}
             autoPlay={autoPlay}
           />
 
           <WatchInformation
-            video={video}
-            isLoading={isPending}
-            isError={isError}
+            video={resolvedVideo}
+            isLoading={isVideoInformationLoading}
+            isError={isVideoInformationError}
             error={error}
             onChannelSelect={onChannelSelect}
           />
 
-          {/*
-           * Desktop:
-           * comments stay underneath the video
-           * in the left column.
-           */}
-          {!isStackedLayout && shouldDisplayComments && video && (
-            <WatchComments key={video.id} videoId={video.id} />
+          {!isStackedLayout && shouldDisplayComments && resolvedVideo && (
+            <WatchComments key={resolvedVideo.id} videoId={resolvedVideo.id} />
           )}
         </PrimaryColumn>
 
-        <RecommendationsColumn>
+        <RecommendationsColumn
+          ref={recommendationsColumnRef}
+          onScroll={handleColumnScroll}
+        >
           <WatchRecommendations
-            video={video}
+            video={resolvedVideo}
             currentVideoId={videoId}
-            isVideoLoading={isPending}
+            isVideoLoading={isVideoInformationLoading}
             onVideoSelect={onVideoSelect}
           />
         </RecommendationsColumn>
 
-        {/*
-         * Tablet/mobile:
-         * recommendations render first,
-         * followed by comments.
-         */}
-        {isStackedLayout && shouldDisplayComments && video && (
+        {isStackedLayout && shouldDisplayComments && resolvedVideo && (
           <CommentsColumn>
-            <WatchComments key={video.id} videoId={video.id} />
+            <WatchComments key={resolvedVideo.id} videoId={resolvedVideo.id} />
           </CommentsColumn>
         )}
       </WatchLayout>

@@ -6,8 +6,9 @@ export const AppRoutes = {
   Subscriptions: '/subscriptions',
   History: '/history',
   Downloads: '/downloads',
-
+  LikedVideos: '/liked-videos',
   Channel: '/channel/:channelId',
+  WatchLater: '/watch-later',
 } as const;
 
 export const getChannelPath = (channelId: string): string => {

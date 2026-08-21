@@ -103,6 +103,7 @@ const VideoCard = ({ video, onSelect }: VideoCardProps) => {
               src={channelAvatarUrl}
               alt={`${channelTitle} channel`}
               loading="lazy"
+              referrerPolicy="no-referrer"
             />
           ) : (
             <ChannelInitial>{channelInitial}</ChannelInitial>

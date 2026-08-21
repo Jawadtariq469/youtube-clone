@@ -17,8 +17,18 @@ interface ActionButtonProps extends ThemeProps {
 export const WatchPage = styled.section`
   width: 100%;
   max-width: 1800px;
+  height: 100%;
+  min-height: 0;
 
   margin: 0 auto;
+
+  overflow: hidden;
+
+  @media (max-width: 1100px) {
+    height: auto;
+
+    overflow: visible;
+  }
 `;
 
 export const WatchLayout = styled.div`
@@ -28,14 +38,16 @@ export const WatchLayout = styled.div`
     minmax(0, 1fr)
     minmax(320px, 402px);
 
-  grid-template-areas:
-    'primary recommendations'
-    'primary recommendations';
+  grid-template-areas: 'primary recommendations';
+
+  grid-template-rows: minmax(0, 1fr);
 
   align-items: start;
   column-gap: 24px;
 
   width: 100%;
+  height: 100%;
+  min-height: 0;
 
   @media (max-width: 1100px) {
     grid-template-columns: minmax(0, 1fr);
@@ -44,21 +56,97 @@ export const WatchLayout = styled.div`
       'primary'
       'recommendations'
       'comments';
+
+    grid-template-rows: auto;
+
+    height: auto;
   }
 `;
+
 export const PrimaryColumn = styled.div`
   grid-area: primary;
 
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+
+  padding-right: 6px;
+
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+
+  &:hover {
+    scrollbar-color: rgb(128 128 128 / 55%) transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background-color: transparent;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(128 128 128 / 55%);
+  }
+
+  @media (max-width: 1100px) {
+    height: auto;
+
+    padding-right: 0;
+
+    overflow: visible;
+    overscroll-behavior-y: auto;
+  }
 `;
 
 export const RecommendationsColumn = styled.div`
   grid-area: recommendations;
 
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+
+  padding-right: 6px;
+
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+
+  &:hover {
+    scrollbar-color: rgb(128 128 128 / 55%) transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background-color: transparent;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(128 128 128 / 55%);
+  }
 
   @media (max-width: 1100px) {
+    height: auto;
+
     margin-top: 28px;
+    padding-right: 0;
+
+    overflow: visible;
+    overscroll-behavior-y: auto;
   }
 `;
 
@@ -67,7 +155,30 @@ export const CommentsColumn = styled.div`
 
   min-width: 0;
 `;
+export const DesktopCommentsInfiniteScrollSentinel = styled.div`
+  display: block;
 
+  width: 100%;
+  height: 1px;
+
+  @media (max-width: 1100px) {
+    display: none;
+  }
+`;
+
+export const DesktopCommentsLoadingStatus = styled.p`
+  margin: 16px 0 0;
+
+  color: inherit;
+
+  font-size: 13px;
+
+  opacity: 0.7;
+
+  @media (max-width: 1100px) {
+    display: none;
+  }
+`;
 export const WatchInformation = styled.div`
   padding: 14px 4px 0;
 
@@ -299,8 +410,12 @@ export const ActionButton = styled.button<ActionButtonProps>`
   font-weight: 600;
 
   cursor: pointer;
+  &:disabled {
+    opacity: 0.65;
 
-  &:hover {
+    cursor: wait;
+  }
+  &:hover:not(:disabled) {
     background-color: ${({ $appTheme }) => $appTheme.colors.background.active};
   }
 

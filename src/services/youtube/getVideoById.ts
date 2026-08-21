@@ -1,8 +1,8 @@
 import { youtubeApi } from '../../config/youtubeApi';
+
+import { mapYoutubeVideos } from './mapYoutubeVideo';
+
 import type { Video } from '../../utils/types';
-
-import { mapYoutubeVideo } from './mapYoutubeVideo';
-
 import type { YouTubeVideosResponse } from './types';
 
 export const getVideoById = async (
@@ -30,5 +30,7 @@ export const getVideoById = async (
     return null;
   }
 
-  return mapYoutubeVideo(videoItem);
+  const [video] = await mapYoutubeVideos([videoItem], signal);
+
+  return video ?? null;
 };
